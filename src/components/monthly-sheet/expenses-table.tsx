@@ -59,7 +59,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
   return (
     <Card className="h-fit">
       <CardHeader className="p-0">
-        <CardTitle className="bg-blue-600 text-white m-0 p-2 rounded-t-lg text-base">GASTOS</CardTitle>
+        <CardTitle className="bg-purple-600 text-white m-0 p-2 rounded-t-lg text-base">GASTOS</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>
@@ -68,8 +68,9 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
               <TableRow 
                 key={expense.id}
                 className={cn(
-                  (expense.amount > 0 && !expense.paid) && 'bg-red-500/20',
-                  expense.paid && 'bg-green-500/20'
+                  'border-b-0',
+                  (expense.amount > 0 && !expense.paid) && 'bg-red-200',
+                  expense.paid && 'bg-green-200'
                 )}
               >
                 <TableCell className="font-medium px-2 py-1 w-auto">
@@ -105,7 +106,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                 </TableCell>
               </TableRow>
             ))}
-            <TableRow className="font-bold bg-green-200">
+            <TableRow className="font-bold bg-green-200 border-b-0">
                 <TableCell className="px-2 py-1">GASTO GENERAL</TableCell>
                 <TableCell className="text-right px-2 py-1">${formatCurrency(totalExpenses)}</TableCell>
                 <TableCell className="px-2 py-1" colSpan={2}></TableCell>

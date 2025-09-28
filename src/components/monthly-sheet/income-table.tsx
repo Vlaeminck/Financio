@@ -18,24 +18,6 @@ type IncomeTableProps = {
   incomes: Transaction[];
 };
 
-const formatCurrency = (value: number | undefined) => {
-    if (value === undefined) return '-';
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-};
-
-const formatUsd = (value: number | undefined) => {
-    if (value === undefined) return '-';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
-}
-
 export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
   const [incomes, setIncomes] = useState(initialIncomes);
 
@@ -60,7 +42,7 @@ export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
   return (
     <Card>
       <CardHeader className="p-0">
-        <CardTitle className="bg-green-600 text-white m-0 p-2 rounded-t-lg text-base">INGRESOS</CardTitle>
+        <CardTitle className="bg-purple-600 text-white m-0 p-2 rounded-t-lg text-base">INGRESOS</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>
