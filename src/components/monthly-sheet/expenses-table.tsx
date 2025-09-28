@@ -4,6 +4,8 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -47,6 +49,14 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: Expen
       </CardHeader>
       <CardContent className="p-0">
         <Table>
+            <TableHeader>
+                <TableRow className="text-xs text-muted-foreground">
+                    <TableHead className="h-auto p-2 font-medium">Nombre</TableHead>
+                    <TableHead className="h-auto p-2 font-medium">Valor</TableHead>
+                    <TableHead className="h-auto p-2 font-medium">Nota</TableHead>
+                    <TableHead className="h-auto p-2 w-10"></TableHead>
+                </TableRow>
+            </TableHeader>
           <TableBody>
             {expenses.map((expense) => (
               <TableRow 
