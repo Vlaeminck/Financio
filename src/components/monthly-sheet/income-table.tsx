@@ -20,6 +20,7 @@ type IncomeTableProps = {
   incomes: Transaction[];
   onIncomeChange: (income: Transaction) => void;
   onAddIncome: (newIncome: { description: string; amount: number }) => void;
+  onRemoveIncome: (id: string) => void;
 };
 
 function AddIncomeForm({ onAddIncome }: { onAddIncome: IncomeTableProps['onAddIncome'] }) {
@@ -80,13 +81,12 @@ function AddIncomeForm({ onAddIncome }: { onAddIncome: IncomeTableProps['onAddIn
 }
 
 
-export function IncomeTable({ incomes, onIncomeChange, onAddIncome }: IncomeTableProps) {
+export function IncomeTable({ incomes, onIncomeChange, onAddIncome, onRemoveIncome }: IncomeTableProps) {
   
   const handleInputChange = (id: string, field: keyof Transaction, value: any) => {
     const income = incomes.find(inc => inc.id === id);
     if (income) {
-      onIncomeCode.ts
-change({ ...income, [field]: value });
+      onIncomeChange({ ...income, [field]: value });
     }
   };
 
@@ -115,6 +115,11 @@ change({ ...income, [field]: value });
                     onChange={(e) => handleInputChange(income.id, 'amount', parseFloat(e.target.value) || 0)}
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right rounded-none w-full"
                   />
+                </TableCell>
+                <TableCell className="p-1 w-10 text-center align-middle">
+                  <button onClick={() => onRemoveIncome(income.id)} className="text-red-500 hover:text-red-700 font-bold">
+                    X
+                  </button>
                 </TableCell>
               </TableRow>
             ))}

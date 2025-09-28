@@ -163,6 +163,10 @@ export function MonthlySheet() {
         setAllTransactions(prev => prev.filter(t => t.id !== id));
     };
 
+    const handleRemoveIncome = (id: string) => {
+        setAllTransactions(prev => prev.filter(t => t.id !== id));
+    };
+
     if (!currentDate) {
         // Render a loading state or nothing while date is being set
         return null;
@@ -191,6 +195,7 @@ export function MonthlySheet() {
                         incomes={incomes}
                         onIncomeChange={handleTransactionChange}
                         onAddIncome={handleAddIncome}
+                        onRemoveIncome={handleRemoveIncome}
                     />
                     <SummarySection transactions={filteredTransactions} arsRate={dolarCripto}/>
                 </div>
