@@ -10,7 +10,7 @@ import { SummarySection } from './summary-section';
 import { TRANSACTIONS } from '@/lib/data';
 import type { Transaction, CryptoHolding } from '@/lib/types';
 import { getMonth, getYear } from 'date-fns';
-import { getCoinPrices } from '@/lib/actions';
+import { getCoinPrices, getDolarCriptoRate } from '@/lib/actions';
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [
   { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', quantity: 0.12 },
@@ -21,22 +21,34 @@ export function MonthlySheet() {
     const [allTransactions, setAllTransactions] = useState<Transaction[]>(TRANSACTIONS);
     const [currentDate, setCurrentDate] = useState<Date | null>(null);
     const [cryptoHoldings, setCryptoHoldings] = useState<CryptoHolding[]>([]);
+    const [arsRate, setArsRate] = useState(1000);
 
     useEffect(() => {
         // Set initial date on client to avoid hydration mismatch
-        setCurrentDate(new Date('2024-10-01'));
+        if (typeof window !== 'undefined') {
+          setCurrentDate(new Date('2024-10-01'));
+        }
     }, []);
 
-    const updateCryptoPrices = useCallback(async (holdingsToUpdate: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[]) => {
-        const ids = holdingsToUpdate.map(h => h.id);
-        const prices = await getCoinPrices(ids);
-        // This is a placeholder, in a real app you'd get this from an API
-        const arsRate = 1000; 
+    const updateDolarRate = useCallback(async () => {
+        const rate = await getDolarCriptoRate();
+        if (rate) {
+            setArsRate(rate);
+        }
+    }, []);
 
+    const updateCryptoPrices = useCallback(async (holdingsToUpdate: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[], currentArsRate: number) => {
+        const ids = holdingsToUpdate.map(h => h.id);
+        if (ids.length === 0) {
+            setCryptoHoldings([]);
+            return;
+        };
+        const prices = await getCoinPrices(ids);
+        
         const updatedHoldings = holdingsToUpdate.map(holding => {
             const price = prices[holding.id]?.usd || 0;
             const valueUsd = price * holding.quantity;
-            const valueArs = valueUsd * arsRate;
+            const valueArs = valueUsd * currentArsRate;
             return {
                 ...holding,
                 price,
@@ -48,17 +60,25 @@ export function MonthlySheet() {
     }, []);
 
     useEffect(() => {
-        updateCryptoPrices(initialCryptoHoldings);
-    }, [updateCryptoPrices]);
+        updateDolarRate();
+        const rateInterval = setInterval(updateDolarRate, 3600000); // refresh every hour
+        return () => clearInterval(rateInterval);
+    }, [updateDolarRate]);
+
+    useEffect(() => {
+        const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
+        setCryptoHoldings(initialHoldings);
+        updateCryptoPrices(initialHoldings, arsRate);
+    }, [updateCryptoPrices, arsRate]);
     
     useEffect(() => {
         if (cryptoHoldings.length > 0) {
             const interval = setInterval(() => {
-                updateCryptoPrices(cryptoHoldings);
+                updateCryptoPrices(cryptoHoldings, arsRate);
             }, 60000); // refresh every minute
             return () => clearInterval(interval);
         }
-    }, [cryptoHoldings, updateCryptoPrices]);
+    }, [cryptoHoldings, updateCryptoPrices, arsRate]);
 
     const filteredTransactions = useMemo(() => {
         if (!currentDate) return [];
@@ -100,19 +120,16 @@ export function MonthlySheet() {
                 id: coin.id,
                 name: coin.name,
                 symbol: coin.symbol.toUpperCase(),
-                quantity: quantity,
-                price: 0,
-                valueUsd: 0,
-                valueArs: 0,
+                quantity: quantity
             };
             newHoldings = [...cryptoHoldings, newHolding];
         }
-        updateCryptoPrices(newHoldings);
+        updateCryptoPrices(newHoldings, arsRate);
     };
 
     const handleRemoveCryptoHolding = (id: string) => {
         const newHoldings = cryptoHoldings.filter(h => h.id !== id);
-        setCryptoHoldings(newHoldings);
+        updateCryptoPrices(newHoldings, arsRate);
     };
     
     if (!currentDate) {
@@ -137,7 +154,7 @@ export function MonthlySheet() {
                         onIncomeChange={handleTransactionChange}
                         onAddIncome={() => handleAddTransaction('income')}
                     />
-                    <SummarySection transactions={filteredTransactions} />
+                    <SummarySection transactions={filteredTransactions} arsRate={arsRate}/>
                 </div>
                 <div className="lg:col-span-1 space-y-4">
                     <CryptoTable 

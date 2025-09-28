@@ -3,6 +3,7 @@ import type { Transaction } from '@/lib/types';
 
 type SummarySectionProps = {
   transactions: Transaction[];
+  arsRate: number;
 };
 
 const formatCurrency = (value: number, currency: 'ARS' | 'USD', showNegativeSign = true) => {
@@ -26,15 +27,13 @@ const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-b
     </div>
 );
 
-export function SummarySection({ transactions }: SummarySectionProps) {
+export function SummarySection({ transactions, arsRate }: SummarySectionProps) {
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const fixedExpense = transactions.filter(t => t.amount > 0 && t.paid !== undefined).reduce((sum, t) => sum + t.amount, 0);
 
   const remainingPesos = totalIncome - totalExpense;
-  // This is a placeholder, in a real app you'd get this from an API
-  const usdRate = 1000;
-  const remainingUsd = remainingPesos / usdRate;
+  const remainingUsd = arsRate > 0 ? remainingPesos / arsRate : 0;
 
   return (
     <div className="space-y-2">

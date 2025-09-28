@@ -59,3 +59,20 @@ export async function getCoinPrices(ids: string[]) {
     return {};
   }
 }
+
+export async function getDolarCriptoRate() {
+  try {
+    const response = await fetch('https://dolarapi.com/v1/dolares/cripto', {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
+    if (!response.ok) {
+      console.error('Error fetching dolar api');
+      return null;
+    }
+    const data = await response.json();
+    return data.venta; 
+  } catch (error) {
+    console.error('Error fetching dolar rate:', error);
+    return null;
+  }
+}
