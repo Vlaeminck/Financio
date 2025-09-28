@@ -21,14 +21,14 @@ export function TransactionSheet() {
       <SheetTrigger asChild>
         <Button>
           <Icons.add className="mr-2 h-4 w-4" />
-          New Transaction
+          Nueva Transacción
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle>Add Transaction</SheetTitle>
+          <SheetTitle>Añadir Transacción</SheetTitle>
           <SheetDescription>
-            Log a new income or expense to track your finances.
+            Registra un nuevo ingreso o gasto para controlar tus finanzas.
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">

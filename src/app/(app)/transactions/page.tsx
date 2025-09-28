@@ -18,6 +18,7 @@ import { TransactionSheet } from '@/components/transaction-sheet';
 import { TRANSACTIONS, CATEGORIES } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { Icons } from '@/components/icons';
 
 export default function TransactionsPage() {
@@ -32,28 +33,28 @@ export default function TransactionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Transactions</h1>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">Transacciones</h1>
           <p className="text-muted-foreground">
-            A detailed history of your income and expenses.
+            Un historial detallado de tus ingresos y gastos.
           </p>
         </div>
         <TransactionSheet />
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>All Transactions</CardTitle>
+          <CardTitle>Todas las Transacciones</CardTitle>
           <CardDescription>
-            Browse and manage all your logged financial activities.
+            Explora y gestiona todas tus actividades financieras registradas.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Description</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Descripción</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Fecha</TableHead>
+                <TableHead className="text-right">Monto</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -77,18 +78,18 @@ export default function TransactionsPage() {
                         variant={transaction.type === 'income' ? 'default' : 'secondary'}
                         className={cn(transaction.type === 'income' && 'bg-emerald-500/20 text-emerald-700 hover:bg-emerald-500/30', transaction.type === 'expense' && 'bg-red-500/20 text-red-700 hover:bg-red-500/30')}
                       >
-                        {transaction.type}
+                        {transaction.type === 'income' ? 'Ingreso' : 'Gasto'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {format(transaction.date, 'MMM d, yyyy')}
+                      {format(transaction.date, 'd MMM, yyyy', { locale: es })}
                     </TableCell>
                     <TableCell className={cn(
                         "text-right font-medium",
                         transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                     )}>
                       {transaction.type === 'income' ? '+' : '-'}
-                      ${transaction.amount.toFixed(2)}
+                      {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(transaction.amount)}
                     </TableCell>
                   </TableRow>
                 );

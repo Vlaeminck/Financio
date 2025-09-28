@@ -17,7 +17,7 @@ import {z} from 'genkit';
 const AutoCategorizeExpenseInputSchema = z.object({
   description: z
     .string()
-    .describe('A detailed description of the expense incurred.'),
+    .describe('Una descripción detallada del gasto realizado.'),
 });
 export type AutoCategorizeExpenseInput = z.infer<typeof AutoCategorizeExpenseInputSchema>;
 
@@ -25,7 +25,7 @@ const AutoCategorizeExpenseOutputSchema = z.object({
   category: z
     .string()
     .describe(
-      'The suggested category for the expense, chosen from a predefined list (e.g., Groceries, Utilities, Entertainment).' 
+      'La categoría sugerida para el gasto, elegida de una lista predefinida (por ejemplo, Comestibles, Servicios, Entretenimiento).' 
     ),
 });
 export type AutoCategorizeExpenseOutput = z.infer<typeof AutoCategorizeExpenseOutputSchema>;
@@ -38,11 +38,11 @@ const prompt = ai.definePrompt({
   name: 'autoCategorizeExpensePrompt',
   input: {schema: AutoCategorizeExpenseInputSchema},
   output: {schema: AutoCategorizeExpenseOutputSchema},
-  prompt: `Given the following expense description, suggest the most appropriate category from the following list: Groceries, Utilities, Entertainment, Transportation, Housing, Healthcare, Shopping, Food, Travel, Education, Bills, Others.
+  prompt: `Dada la siguiente descripción de un gasto, sugiere la categoría más apropiada de la siguiente lista: Comestibles, Transporte, Vivienda, Comida, Servicios, Entretenimiento, Salud, Educación, Regalos, Otros.
 
-Expense Description: {{{description}}}
+Descripción del Gasto: {{{description}}}
 
-Category:`,
+Categoría:`,
 });
 
 const autoCategorizeExpenseFlow = ai.defineFlow(

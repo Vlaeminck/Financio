@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Transaction } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 type RecentTransactionsProps = {
   transactions: Transaction[];
@@ -28,19 +29,19 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
+        <CardTitle>Transacciones Recientes</CardTitle>
         <CardDescription>
-          A quick look at your latest financial activities.
+          Un vistazo rápido a tus últimas actividades financieras.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Description</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="text-right">Date</TableHead>
+              <TableHead>Descripción</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead className="text-right">Monto</TableHead>
+              <TableHead className="text-right">Fecha</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -55,7 +56,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                     variant={transaction.type === 'income' ? 'default' : 'secondary'}
                     className={cn(transaction.type === 'income' && 'bg-emerald-500/20 text-emerald-700 hover:bg-emerald-500/30', transaction.type === 'expense' && 'bg-red-500/20 text-red-700 hover:bg-red-500/30')}
                   >
-                    {transaction.type}
+                    {transaction.type === 'income' ? 'Ingreso' : 'Gasto'}
                   </Badge>
                 </TableCell>
                 <TableCell className={cn(
@@ -63,9 +64,9 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                     transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                 )}>
                   {transaction.type === 'income' ? '+' : '-'}
-                  ${transaction.amount.toFixed(2)}
+                  {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(transaction.amount)}
                 </TableCell>
-                <TableCell className="text-right text-muted-foreground">{format(transaction.date, 'MMM d')}</TableCell>
+                <TableCell className="text-right text-muted-foreground">{format(transaction.date, 'd MMM', { locale: es })}</TableCell>
               </TableRow>
             ))}
           </TableBody>

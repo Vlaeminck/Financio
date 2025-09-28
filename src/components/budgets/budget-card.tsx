@@ -19,9 +19,9 @@ export function BudgetCard({ budget }: { budget: Budget }) {
   const remaining = budget.amount - budget.spent;
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('es-ES', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'EUR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -44,15 +44,15 @@ export function BudgetCard({ budget }: { budget: Budget }) {
             </CardTitle>
             <div className="text-lg font-bold">{formatCurrency(budget.amount)}</div>
         </div>
-        <CardDescription>Monthly Budget</CardDescription>
+        <CardDescription>Presupuesto Mensual</CardDescription>
       </CardHeader>
       <CardContent>
         <Progress value={percentage} className="h-2" indicatorClassName={progressColorClass} />
       </CardContent>
       <CardFooter className="flex justify-between text-sm text-muted-foreground">
-        <span>Spent: {formatCurrency(budget.spent)}</span>
+        <span>Gastado: {formatCurrency(budget.spent)}</span>
         <span className={cn(remaining < 0 && 'text-destructive font-semibold')}>
-            {remaining >= 0 ? `${formatCurrency(remaining)} remaining` : `${formatCurrency(Math.abs(remaining))} over`}
+            {remaining >= 0 ? `${formatCurrency(remaining)} restante` : `${formatCurrency(Math.abs(remaining))} excedido`}
         </span>
       </CardFooter>
     </Card>

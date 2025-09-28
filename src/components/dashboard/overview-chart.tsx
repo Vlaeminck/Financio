@@ -53,8 +53,8 @@ export function OverviewChart({ transactions }: OverviewChartProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Expenses Overview</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Resumen de Gastos</CardTitle>
+        <CardDescription>Enero - Junio 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -64,7 +64,7 @@ export function OverviewChart({ transactions }: OverviewChartProps) {
           <PieChart>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent hideLabel formatter={(value, name) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(value as number)} />}
             />
             <Pie
               data={chartData}
@@ -82,10 +82,10 @@ export function OverviewChart({ transactions }: OverviewChartProps) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Tendencia al alza de 5.2% este mes <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total expenses for the last 6 months
+          Mostrando el total de gastos de los últimos 6 meses
         </div>
       </CardFooter>
     </Card>

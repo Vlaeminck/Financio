@@ -12,9 +12,9 @@ export default function DashboardPage() {
   const balance = totalIncome - totalExpenses;
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('es-ES', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'EUR',
     }).format(value);
   }
 
@@ -23,10 +23,10 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight font-headline">
-            Welcome Back!
+            ¡Bienvenido de Nuevo!
           </h1>
           <p className="text-muted-foreground">
-            Here&apos;s a summary of your financial activity.
+            Aquí tienes un resumen de tu actividad financiera.
           </p>
         </div>
         <TransactionSheet />
@@ -34,29 +34,29 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SummaryCard 
-          title="Total Income" 
+          title="Ingresos Totales" 
           value={formatCurrency(totalIncome)} 
           icon={Icons.income}
-          change="+15.2% from last month"
+          change="+15.2% desde el mes pasado"
           changeType="positive"
         />
         <SummaryCard 
-          title="Total Expenses" 
+          title="Gastos Totales" 
           value={formatCurrency(totalExpenses)} 
           icon={Icons.expense}
-          change="+8.1% from last month"
+          change="+8.1% desde el mes pasado"
           changeType="negative"
         />
         <SummaryCard 
-          title="Balance" 
+          title="Saldo" 
           value={formatCurrency(balance)} 
           icon={Icons.dollar}
         />
         <SummaryCard 
-          title="Savings Goal" 
+          title="Meta de Ahorro" 
           value={formatCurrency(25000)} 
           icon={Icons.savings}
-          change="75% of goal reached"
+          change="75% de la meta alcanzada"
         />
       </div>
 

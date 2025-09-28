@@ -21,22 +21,22 @@ import type { ReactNode } from 'react';
 const navItems = [
   {
     href: '/dashboard',
-    label: 'Dashboard',
+    label: 'Panel',
     icon: Icons.dashboard,
   },
   {
     href: '/transactions',
-    label: 'Transactions',
+    label: 'Transacciones',
     icon: Icons.transactions,
   },
   {
     href: '/budgets',
-    label: 'Budgets',
+    label: 'Presupuestos',
     icon: Icons.budgets,
   },
   {
     href: '/reports',
-    label: 'Reports',
+    label: 'Informes',
     icon: Icons.reports,
   },
 ];
@@ -88,7 +88,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 className="shrink-0 md:hidden"
               >
                 <Icons.logo className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
+                <span className="sr-only">Alternar menú de navegación</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
@@ -114,16 +114,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     className="rounded-full"
                   />
                 )}
-                <span className="sr-only">Toggle user menu</span>
+                <span className="sr-only">Alternar menú de usuario</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem>Configuración</DropdownMenuItem>
+              <DropdownMenuItem>Soporte</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>Cerrar Sesión</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>

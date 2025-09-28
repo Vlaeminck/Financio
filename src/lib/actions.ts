@@ -4,7 +4,7 @@ import { autoCategorizeExpense } from '@/ai/flows/auto-categorize-expenses';
 
 export async function suggestCategory(description: string) {
   if (!description) {
-    return { error: 'Description is required.' };
+    return { error: 'La descripción es obligatoria.' };
   }
   
   try {
@@ -12,6 +12,6 @@ export async function suggestCategory(description: string) {
     return { category: result.category };
   } catch (e) {
     console.error(e);
-    return { error: 'Failed to get suggestion from AI.' };
+    return { error: 'No se pudo obtener la sugerencia de la IA.' };
   }
 }

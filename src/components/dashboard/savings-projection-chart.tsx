@@ -16,6 +16,7 @@ import {
 import { useMemo } from 'react';
 import type { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 type SavingsProjectionChartProps = {
   transactions: Transaction[];
@@ -33,7 +34,7 @@ export function SavingsProjectionChart({ transactions }: SavingsProjectionChartP
         const date = new Date();
         date.setMonth(date.getMonth() + i);
         data.push({
-            month: format(date, 'MMM'),
+            month: format(date, 'MMM', { locale: es }),
             savings: currentBalance + (monthlyNet * i),
         });
     }
@@ -42,18 +43,20 @@ export function SavingsProjectionChart({ transactions }: SavingsProjectionChartP
   }, [transactions]);
   
   const formatCurrency = (value: number) =>
-    `$${value.toLocaleString('en-US', {
+    `${new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    })}`;
+    }).format(value)}`;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Savings Projection</CardTitle>
+        <CardTitle>Proyección de Ahorros</CardTitle>
         <CardDescription>
-          Your projected savings over the next 12 months based on current trends.
-          Projected balance in 1 year: <span className="font-bold text-primary">{formatCurrency(projectionEndValue)}</span>
+          Tus ahorros proyectados para los próximos 12 meses según las tendencias actuales.
+          Saldo proyectado en 1 año: <span className="font-bold text-primary">{formatCurrency(projectionEndValue)}</span>
         </CardDescription>
       </CardHeader>
       <CardContent>
