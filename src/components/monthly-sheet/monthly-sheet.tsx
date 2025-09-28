@@ -9,7 +9,7 @@ import { CryptoTable } from './crypto-table';
 import { SummarySection } from './summary-section';
 import { TRANSACTIONS } from '@/lib/data';
 import type { Transaction, CryptoHolding } from '@/lib/types';
-import { format, getMonth, getYear } from 'date-fns';
+import { getMonth, getYear } from 'date-fns';
 import { getCoinPrices } from '@/lib/actions';
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [
@@ -19,8 +19,13 @@ const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueAr
 
 export function MonthlySheet() {
     const [allTransactions, setAllTransactions] = useState<Transaction[]>(TRANSACTIONS);
-    const [currentDate, setCurrentDate] = useState(new Date('2024-10-01'));
+    const [currentDate, setCurrentDate] = useState<Date | null>(null);
     const [cryptoHoldings, setCryptoHoldings] = useState<CryptoHolding[]>([]);
+
+    useEffect(() => {
+        // Set initial date on client to avoid hydration mismatch
+        setCurrentDate(new Date('2024-10-01'));
+    }, []);
 
     const updateCryptoPrices = useCallback(async (holdingsToUpdate: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[]) => {
         const ids = holdingsToUpdate.map(h => h.id);
@@ -56,6 +61,7 @@ export function MonthlySheet() {
     }, [cryptoHoldings, updateCryptoPrices]);
 
     const filteredTransactions = useMemo(() => {
+        if (!currentDate) return [];
         return allTransactions.filter(t => 
             getYear(t.date) === getYear(currentDate) && 
             getMonth(t.date) === getMonth(currentDate)
@@ -70,6 +76,7 @@ export function MonthlySheet() {
     }
     
     const handleAddTransaction = (type: 'income' | 'expense') => {
+        if (!currentDate) return;
         const newTransaction: Transaction = {
           id: `${type}-${Date.now()}`,
           date: new Date(currentDate),
@@ -107,6 +114,11 @@ export function MonthlySheet() {
         const newHoldings = cryptoHoldings.filter(h => h.id !== id);
         setCryptoHoldings(newHoldings);
     };
+    
+    if (!currentDate) {
+        // Render a loading state or nothing while date is being set
+        return null;
+    }
 
     return (
         <div className="space-y-4">
