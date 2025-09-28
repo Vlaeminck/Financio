@@ -54,7 +54,7 @@ export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
                     type="text"
                     value={income.description}
                     onChange={(e) => handleIncomeChange(income.id, 'description', e.target.value)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
                     
                   />
                 </TableCell>
@@ -63,7 +63,7 @@ export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
                     type="number"
                     value={income.amount}
                     onChange={(e) => handleIncomeChange(income.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
                   />
                 </TableCell>
                 <TableCell className="text-right p-0">
@@ -71,7 +71,7 @@ export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
                     type="number"
                     value={income.valueUsd}
                     onChange={(e) => handleIncomeChange(income.id, 'valueUsd', parseFloat(e.target.value) || 0)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
                   />
                 </TableCell>
                 <TableCell className="text-right p-0">
@@ -79,7 +79,7 @@ export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
                     type="number"
                     value={income.priceUsd}
                     onChange={(e) => handleIncomeChange(income.id, 'priceUsd', parseFloat(e.target.value) || 0)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
                   />
                 </TableCell>
               </TableRow>

@@ -78,7 +78,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                     type="text"
                     value={expense.category}
                     onChange={(e) => handleExpenseChange(expense.id, 'category', e.target.value)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
                 <TableCell className={cn("text-right font-medium p-0")}>
@@ -86,7 +86,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                     type="number"
                     value={expense.amount}
                     onChange={(e) => handleExpenseChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full rounded-none"
                   />
                 </TableCell>
                 <TableCell className="p-0">
@@ -94,7 +94,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                     type="text"
                     value={expense.notes}
                     onChange={(e) => handleExpenseChange(expense.id, 'notes', e.target.value)}
-                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
+                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
                 <TableCell className="p-1 w-10 text-center align-middle">
