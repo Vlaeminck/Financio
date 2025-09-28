@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type ExpensesTableProps = {
   expenses: Transaction[];
@@ -27,14 +28,20 @@ const formatCurrency = (value: number) => {
 };
 
 export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps) {
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [expenses, setExpenses] = useState(initialExpenses.map(e => ({...e, paid: e.amount > 0 ? false : true })));
 
   const handleExpenseChange = (id: string, field: keyof Transaction, value: any) => {
     setExpenses(expenses.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
   };
 
+   const handlePaidChange = (id: string, paid: boolean) => {
+    setExpenses(
+      expenses.map(exp => (exp.id === id ? { ...exp, paid } : exp))
+    );
+  };
+
   const addNewExpense = () => {
-    const newExpense: Transaction = {
+    const newExpense: Transaction & { paid: boolean } = {
       id: `expense-${Date.now()}`,
       date: new Date(),
       description: '',
@@ -42,6 +49,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
       type: 'expense',
       category: 'Otros',
       notes: '',
+      paid: false,
     };
     setExpenses([...expenses, newExpense]);
   };
@@ -57,23 +65,27 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
         <Table>
           <TableBody>
             {expenses.map((expense) => (
-              <TableRow key={expense.id}>
+              <TableRow 
+                key={expense.id}
+                className={cn(
+                  (expense.amount > 0 && !expense.paid) && 'bg-red-500/20',
+                  expense.paid && 'bg-green-500/20'
+                )}
+              >
                 <TableCell className="font-medium px-2 py-1 w-auto">
                   <Input
                     type="text"
                     value={expense.category}
                     onChange={(e) => handleExpenseChange(expense.id, 'category', e.target.value)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring"
-                    style={{width: `${(expense.category.length || 10)}ch`}}
+                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring w-full"
                   />
                 </TableCell>
-                <TableCell className={cn("text-right font-medium text-white px-2 py-1 w-auto", expense.amount > 0 ? 'bg-red-500' : 'bg-transparent')}>
+                <TableCell className={cn("text-right font-medium px-2 py-1 w-auto")}>
                    <Input
                     type="number"
                     value={expense.amount}
                     onChange={(e) => handleExpenseChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right"
-                    style={{width: `${(expense.amount.toString().length || 5)}ch`}}
+                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right w-full"
                   />
                 </TableCell>
                 <TableCell className="px-2 py-1 w-auto">
@@ -81,8 +93,14 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                     type="text"
                     value={expense.notes}
                     onChange={(e) => handleExpenseChange(expense.id, 'notes', e.target.value)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring"
-                    style={{width: `${(expense.notes?.length || 10)}ch`}}
+                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring w-full"
+                  />
+                </TableCell>
+                <TableCell className="px-2 py-1 w-10 text-center">
+                  <Checkbox
+                    checked={expense.paid}
+                    onCheckedChange={(checked) => handlePaidChange(expense.id, !!checked)}
+                    className="border-gray-500"
                   />
                 </TableCell>
               </TableRow>
@@ -90,7 +108,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
             <TableRow className="font-bold bg-green-200">
                 <TableCell className="px-2 py-1">GASTO GENERAL</TableCell>
                 <TableCell className="text-right px-2 py-1">${formatCurrency(totalExpenses)}</TableCell>
-                <TableCell className="px-2 py-1"></TableCell>
+                <TableCell className="px-2 py-1" colSpan={2}></TableCell>
             </TableRow>
           </TableBody>
         </Table>

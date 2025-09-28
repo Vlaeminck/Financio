@@ -10,6 +10,7 @@ export type Transaction = {
   notes?: string;
   valueUsd?: number;
   priceUsd?: number;
+  paid?: boolean;
 };
 
 export type Category = {
