@@ -10,13 +10,15 @@ const formatCurrency = (value: number, currency: 'ARS' | 'USD') => {
     return new Intl.NumberFormat(currency === 'ARS' ? 'es-AR' : 'en-US', {
         style: 'currency',
         currency: currency,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
     }).format(value);
 }
 
-const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-black' }: { title: string; value: string; bgColor?: string; textColor?: string; }) => (
-    <div className={`p-2 flex justify-between items-center ${bgColor} ${textColor}`}>
+const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-black', valueClassName }: { title: string; value: string; bgColor?: string; textColor?: string; valueClassName?: string; }) => (
+    <div className={`p-1.5 flex justify-between items-center ${bgColor} ${textColor} text-sm`}>
         <span className="font-bold">{title}</span>
-        <span className="font-mono">{value}</span>
+        <span className={`font-mono ${valueClassName}`}>{value}</span>
     </div>
 );
 
@@ -33,12 +35,12 @@ export function SummarySection({ transactions, cryptoHoldings }: SummarySectionP
 
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-1">
             <CardContent className="p-0">
                 <SummaryBox title="GASTO FIJO" value={formatCurrency(1772733.00, 'ARS')} bgColor="bg-green-200"/>
                 <SummaryBox title="GASTO GENERAL" value={formatCurrency(totalExpense, 'ARS')} bgColor="bg-green-200"/>
-                <div className="p-2 flex justify-between items-center">
+                <div className="p-1.5 flex justify-between items-center text-sm">
                     <span className="font-bold">EN DIGITAL</span>
                     <span>{formatCurrency(1502733.00, 'ARS')}</span>
                 </div>
@@ -52,7 +54,7 @@ export function SummarySection({ transactions, cryptoHoldings }: SummarySectionP
         </Card>
         <Card className="lg:col-span-1">
              <CardContent className="p-0">
-                 <div className="p-2 flex justify-between items-center bg-green-200">
+                 <div className="p-1.5 flex justify-between items-center bg-green-200 text-sm">
                     <span className="font-bold">MIEDO Y CODICIA</span>
                     <span className="font-bold text-green-700 bg-green-300 px-2 rounded-full">37</span>
                 </div>

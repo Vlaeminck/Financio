@@ -18,6 +18,8 @@ const formatCurrency = (value: number | undefined) => {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
 };
 
@@ -32,26 +34,26 @@ const formatUsd = (value: number | undefined) => {
 export function IncomeTable({ incomes }: IncomeTableProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="bg-green-600 text-white -m-6 p-4 rounded-t-lg">INGRESOS</CardTitle>
+      <CardHeader className="p-0">
+        <CardTitle className="bg-green-600 text-white m-0 p-2 rounded-t-lg text-base">INGRESOS</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>INGRESOS</TableHead>
-              <TableHead className="text-right">VALOR</TableHead>
-              <TableHead className="text-right">VALOR EN USD</TableHead>
-              <TableHead className="text-right">PRECIO USD</TableHead>
+              <TableHead className="px-2 py-1 h-auto text-xs">INGRESOS</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR EN USD</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">PRECIO USD</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {incomes.map((income) => (
               <TableRow key={income.id}>
-                <TableCell className="font-medium">{income.description}</TableCell>
-                <TableCell className="text-right">{formatCurrency(income.amount)}</TableCell>
-                <TableCell className="text-right">{formatUsd(income.valueUsd)}</TableCell>
-                <TableCell className="text-right">{formatUsd(income.priceUsd)}</TableCell>
+                <TableCell className="font-medium px-2 py-1">{income.description}</TableCell>
+                <TableCell className="text-right px-2 py-1">{formatCurrency(income.amount)}</TableCell>
+                <TableCell className="text-right px-2 py-1">{formatUsd(income.valueUsd)}</TableCell>
+                <TableCell className="text-right px-2 py-1">{formatUsd(income.priceUsd)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

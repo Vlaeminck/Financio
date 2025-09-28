@@ -10,12 +10,16 @@ export function MonthlySheet() {
     const incomes = TRANSACTIONS.filter(t => t.type === 'income');
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <MonthlySheetHeader />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ExpensesTable expenses={expenses} />
-                <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-1 space-y-4">
+                    <ExpensesTable expenses={expenses} />
+                </div>
+                <div className="lg:col-span-1 space-y-4">
                     <IncomeTable incomes={incomes} />
+                </div>
+                <div className="lg:col-span-1 space-y-4">
                     <CryptoTable holdings={CRYPTO_HOLDINGS} />
                 </div>
             </div>

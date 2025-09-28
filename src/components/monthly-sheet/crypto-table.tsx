@@ -23,28 +23,28 @@ const formatCurrency = (value: number, currency = 'ARS') => {
 export function CryptoTable({ holdings }: CryptoTableProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="bg-blue-600 text-white -m-6 p-4 rounded-t-lg">CRIPTO</CardTitle>
+      <CardHeader className="p-0">
+        <CardTitle className="bg-blue-600 text-white m-0 p-2 rounded-t-lg text-base">CRIPTO</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>CRIPTO</TableHead>
-              <TableHead className="text-right">CANTIDAD</TableHead>
-              <TableHead className="text-right">PRECIO</TableHead>
-              <TableHead className="text-right">VALOR EN USD</TableHead>
-              <TableHead className="text-right">VALOR EN ARS</TableHead>
+              <TableHead className="px-2 py-1 h-auto text-xs">CRIPTO</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">CANTIDAD</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">PRECIO</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR EN USD</TableHead>
+              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR EN ARS</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {holdings.map((holding) => (
               <TableRow key={holding.id}>
-                <TableCell className="font-medium">{holding.name}</TableCell>
-                <TableCell className="text-right">{holding.quantity}</TableCell>
-                <TableCell className="text-right">{formatCurrency(holding.price, 'USD')}</TableCell>
-                <TableCell className="text-right">{formatCurrency(holding.valueUsd, 'USD')}</TableCell>
-                <TableCell className="text-right">{formatCurrency(holding.valueArs, 'ARS')}</TableCell>
+                <TableCell className="font-medium px-2 py-1">{holding.name}</TableCell>
+                <TableCell className="text-right px-2 py-1">{holding.quantity}</TableCell>
+                <TableCell className="text-right px-2 py-1">{formatCurrency(holding.price, 'USD')}</TableCell>
+                <TableCell className="text-right px-2 py-1">{formatCurrency(holding.valueUsd, 'USD')}</TableCell>
+                <TableCell className="text-right px-2 py-1">{formatCurrency(holding.valueArs, 'ARS')}</TableCell>
               </TableRow>
             ))}
           </TableBody>
