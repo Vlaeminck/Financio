@@ -76,3 +76,20 @@ export async function getDolarCriptoRate() {
     return null;
   }
 }
+
+export async function getFearAndGreedIndex() {
+  try {
+    const response = await fetch('https://api.alternative.me/fng/?limit=1', {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
+    if (!response.ok) {
+      console.error('Error fetching Fear & Greed Index');
+      return null;
+    }
+    const data = await response.json();
+    return data.data[0];
+  } catch (error) {
+    console.error('Error fetching Fear & Greed Index:', error);
+    return null;
+  }
+}

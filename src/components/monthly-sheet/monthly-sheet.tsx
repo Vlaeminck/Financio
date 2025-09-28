@@ -8,9 +8,9 @@ import { IncomeTable } from './income-table';
 import { CryptoTable } from './crypto-table';
 import { SummarySection } from './summary-section';
 import { TRANSACTIONS } from '@/lib/data';
-import type { Transaction, CryptoHolding } from '@/lib/types';
+import type { Transaction, CryptoHolding, FearAndGreed } from '@/lib/types';
 import { getMonth, getYear } from 'date-fns';
-import { getCoinPrices, getDolarCriptoRate } from '@/lib/actions';
+import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex } from '@/lib/actions';
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [
   { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', quantity: 0.12 },
@@ -22,6 +22,7 @@ export function MonthlySheet() {
     const [currentDate, setCurrentDate] = useState<Date | null>(null);
     const [cryptoHoldings, setCryptoHoldings] = useState<CryptoHolding[]>([]);
     const [arsRate, setArsRate] = useState(1000);
+    const [fearAndGreed, setFearAndGreed] = useState<FearAndGreed | null>(null);
 
     useEffect(() => {
         // Set initial date on client to avoid hydration mismatch
@@ -29,6 +30,13 @@ export function MonthlySheet() {
           setCurrentDate(new Date('2024-09-01T00:00:00Z'));
         }
     }, [currentDate]);
+
+    const updateFearAndGreedIndex = useCallback(async () => {
+        const data = await getFearAndGreedIndex();
+        if (data) {
+            setFearAndGreed(data);
+        }
+    }, []);
 
     const updateDolarRate = useCallback(async () => {
         const rate = await getDolarCriptoRate();
@@ -61,9 +69,14 @@ export function MonthlySheet() {
 
     useEffect(() => {
         updateDolarRate();
+        updateFearAndGreedIndex();
         const rateInterval = setInterval(updateDolarRate, 3600000); // refresh every hour
-        return () => clearInterval(rateInterval);
-    }, [updateDolarRate]);
+        const fngInterval = setInterval(updateFearAndGreedIndex, 3600000); // refresh every hour
+        return () => {
+            clearInterval(rateInterval);
+            clearInterval(fngInterval);
+        }
+    }, [updateDolarRate, updateFearAndGreedIndex]);
 
     useEffect(() => {
         const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
@@ -175,6 +188,7 @@ export function MonthlySheet() {
                 <div className="lg:col-span-1 space-y-4">
                     <CryptoTable 
                         holdings={cryptoHoldings} 
+                        fearAndGreed={fearAndGreed}
                         onAddHolding={handleAddCryptoHolding}
                         onRemoveHolding={handleRemoveCryptoHolding}
                     />

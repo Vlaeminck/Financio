@@ -36,3 +36,10 @@ export type CryptoHolding = {
   valueUsd: number;
   valueArs: number;
 };
+
+export type FearAndGreed = {
+    value: string;
+    value_classification: string;
+    timestamp: string;
+    time_until_update?: string;
+};

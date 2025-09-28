@@ -5,11 +5,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import type { CryptoHolding } from '@/lib/types';
+import type { CryptoHolding, FearAndGreed } from '@/lib/types';
 import { CryptoSearch } from './crypto-search';
+import { cn } from '@/lib/utils';
 
 type CryptoTableProps = {
   holdings: CryptoHolding[];
+  fearAndGreed: FearAndGreed | null;
   onAddHolding: (coin: { id: string; name: string; symbol: string }, quantity: number) => void;
   onRemoveHolding: (id: string) => void;
 };
@@ -28,10 +30,21 @@ const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-b
     </div>
 );
 
+const getFngIndicatorColor = (value: number): string => {
+  if (value <= 25) return 'bg-red-500 text-white'; // Extreme Fear
+  if (value > 25 && value <= 45) return 'bg-orange-500 text-white'; // Fear
+  if (value > 45 && value <= 55) return 'bg-yellow-400 text-black'; // Neutral
+  if (value > 55 && value <= 75) return 'bg-green-400 text-black'; // Greed
+  return 'bg-green-600 text-white'; // Extreme Greed
+};
 
-export function CryptoTable({ holdings, onAddHolding, onRemoveHolding }: CryptoTableProps) {
+export function CryptoTable({ holdings, fearAndGreed, onAddHolding, onRemoveHolding }: CryptoTableProps) {
   const totalCryptoUsd = holdings.reduce((sum, h) => sum + h.valueUsd, 0);
   const totalCryptoArs = holdings.reduce((sum, h) => sum + h.valueArs, 0);
+
+  const fngValue = fearAndGreed ? parseInt(fearAndGreed.value, 10) : null;
+  const fngColorClass = fngValue !== null ? getFngIndicatorColor(fngValue) : 'bg-gray-300';
+
 
   return (
     <Card>
@@ -62,7 +75,9 @@ export function CryptoTable({ holdings, onAddHolding, onRemoveHolding }: CryptoT
       <CardFooter className="flex-col p-0">
         <div className="p-2 flex justify-between items-center bg-green-200 text-sm w-full">
             <span className="font-bold">MIEDO Y CODICIA</span>
-            <span className="font-bold text-green-700 bg-green-300 px-2 rounded-full">37</span>
+            <span className={cn("font-bold px-2 rounded-full", fngColorClass)}>
+                {fngValue ?? '--'}
+            </span>
         </div>
         <SummaryBox title="TOTAL CRIPTO" value={formatCurrency(totalCryptoUsd, 'USD')} bgColor="bg-purple-300 w-full"/>
         <SummaryBox title="TOTAL EN PESOS" value={formatCurrency(totalCryptoArs, 'ARS')} bgColor="bg-green-200 w-full"/>
