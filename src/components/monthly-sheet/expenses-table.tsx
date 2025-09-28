@@ -22,13 +22,15 @@ type ExpensesTableProps = {
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
 };
 
 export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps) {
-  const [expenses, setExpenses] = useState(initialExpenses.map(e => ({...e, paid: e.amount > 0 ? false : true })));
+  const [expenses, setExpenses] = useState(initialExpenses.map(e => ({...e, paid: e.amount > 0 ? false : e.notes === '6 DE 6' ? false : true })));
 
   const handleExpenseChange = (id: string, field: keyof Transaction, value: any) => {
     setExpenses(expenses.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
@@ -70,7 +72,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                 className={cn(
                   'border-b-0',
                   (expense.amount > 0 && !expense.paid) && 'bg-red-200',
-                  expense.paid && 'bg-green-200'
+                  (expense.paid || expense.amount === 0) && 'bg-green-200'
                 )}
               >
                 <TableCell className="font-medium p-0">
@@ -81,7 +83,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                     className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className={cn("text-right font-medium p-0")}>
+                <TableCell className={cn("text-right font-medium p-0 w-[100px]")}>
                    <Input
                     type="number"
                     value={expense.amount}
@@ -89,7 +91,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                     className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className="p-0">
+                <TableCell className="p-0 w-[80px]">
                    <Input
                     type="text"
                     value={expense.notes}
@@ -101,20 +103,19 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                   <Checkbox
                     checked={expense.paid}
                     onCheckedChange={(checked) => handlePaidChange(expense.id, !!checked)}
-                    className="border-gray-500 rounded-sm"
+                    className="border-gray-500 rounded-sm h-5 w-5 border-2"
                   />
                 </TableCell>
               </TableRow>
             ))}
             <TableRow className="font-bold bg-green-200 border-b-0">
                 <TableCell className="p-2">GASTO GENERAL</TableCell>
-                <TableCell className="text-right p-2">${formatCurrency(totalExpenses)}</TableCell>
-                <TableCell className="p-2" colSpan={2}></TableCell>
+                <TableCell className="text-right p-2" colSpan={3}>{formatCurrency(totalExpenses)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
         <div className="p-2">
-            <Button onClick={addNewExpense} size="sm" className="w-full">
+            <Button onClick={addNewExpense} size="sm" className="w-full bg-green-800 hover:bg-green-900 text-white font-bold">
                 <Icons.add className="mr-2 h-4 w-4" />
                 Añadir Gasto
             </Button>
