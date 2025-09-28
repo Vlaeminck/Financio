@@ -58,28 +58,31 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
           <TableBody>
             {expenses.map((expense) => (
               <TableRow key={expense.id}>
-                <TableCell className="font-medium px-2 py-1">
+                <TableCell className="font-medium px-2 py-1 w-auto">
                   <Input
                     type="text"
                     value={expense.category}
                     onChange={(e) => handleExpenseChange(expense.id, 'category', e.target.value)}
                     className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring"
+                    style={{width: `${(expense.category.length || 10)}ch`}}
                   />
                 </TableCell>
-                <TableCell className={cn("text-right font-medium text-white px-2 py-1", expense.amount > 0 ? 'bg-red-500' : 'bg-transparent')}>
+                <TableCell className={cn("text-right font-medium text-white px-2 py-1 w-auto", expense.amount > 0 ? 'bg-red-500' : 'bg-transparent')}>
                    <Input
                     type="number"
                     value={expense.amount}
                     onChange={(e) => handleExpenseChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
                     className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right"
+                    style={{width: `${(expense.amount.toString().length || 5)}ch`}}
                   />
                 </TableCell>
-                <TableCell className="px-2 py-1">
+                <TableCell className="px-2 py-1 w-auto">
                    <Input
                     type="text"
                     value={expense.notes}
                     onChange={(e) => handleExpenseChange(expense.id, 'notes', e.target.value)}
                     className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring"
+                    style={{width: `${(expense.notes?.length || 10)}ch`}}
                   />
                 </TableCell>
               </TableRow>
