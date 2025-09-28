@@ -39,14 +39,6 @@ export function IncomeTable({ incomes }: IncomeTableProps) {
       </CardHeader>
       <CardContent className="p-0">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="px-2 py-1 h-auto text-xs">INGRESOS</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR EN USD</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">PRECIO USD</TableHead>
-            </TableRow>
-          </TableHeader>
           <TableBody>
             {incomes.map((income) => (
               <TableRow key={income.id}>

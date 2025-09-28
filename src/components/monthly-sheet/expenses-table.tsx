@@ -2,7 +2,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
@@ -31,13 +30,6 @@ export function ExpensesTable({ expenses }: ExpensesTableProps) {
       </CardHeader>
       <CardContent className="p-0">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-1/2 px-2 py-1 h-auto text-xs">GASTOS</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR</TableHead>
-              <TableHead className="px-2 py-1 h-auto text-xs">NOTAS</TableHead>
-            </TableRow>
-          </TableHeader>
           <TableBody>
             {expenses.map((expense) => (
               <TableRow key={expense.id}>

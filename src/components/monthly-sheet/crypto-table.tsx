@@ -28,15 +28,6 @@ export function CryptoTable({ holdings }: CryptoTableProps) {
       </CardHeader>
       <CardContent className="p-0">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="px-2 py-1 h-auto text-xs">CRIPTO</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">CANTIDAD</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">PRECIO</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR EN USD</TableHead>
-              <TableHead className="text-right px-2 py-1 h-auto text-xs">VALOR EN ARS</TableHead>
-            </TableRow>
-          </TableHeader>
           <TableBody>
             {holdings.map((holding) => (
               <TableRow key={holding.id}>
