@@ -27,10 +27,11 @@ export type Budget = {
 };
 
 export type CryptoHolding = {
-  id: string;
+  id: string; // coingecko id
   name: string;
+  symbol: string;
   quantity: number;
-  price: number;
+  price: number; // price in usd
   valueUsd: number;
   valueArs: number;
-}
+};

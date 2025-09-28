@@ -15,3 +15,47 @@ export async function suggestCategory(description: string) {
     return { error: 'No se pudo obtener la sugerencia de la IA.' };
   }
 }
+
+
+export async function searchCoins(query: string) {
+  if (!query) return [];
+  try {
+    const response = await fetch(`https://api.coingecko.com/api/v3/search?query=${query}`, {
+      headers: {
+        'x-cg-demo-api-key': process.env.COINGECKO_API_KEY!,
+      },
+    });
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    return data.coins.map((coin: any) => ({
+      id: coin.id,
+      name: coin.name,
+      symbol: coin.symbol,
+      thumb: coin.thumb,
+    }));
+  } catch (error) {
+    console.error('Error searching coins:', error);
+    return [];
+  }
+}
+
+export async function getCoinPrices(ids: string[]) {
+  if (ids.length === 0) return {};
+  try {
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd`, {
+       headers: {
+        'x-cg-demo-api-key': process.env.COINGECKO_API_KEY!,
+      },
+    });
+    if (!response.ok) {
+      return {};
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    return {};
+  }
+}

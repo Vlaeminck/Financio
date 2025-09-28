@@ -1,4 +1,4 @@
-import type { Transaction, Category, Budget, CryptoHolding } from './types';
+import type { Transaction, Category, Budget } from './types';
 import { Icons } from '@/components/icons';
 
 export const CATEGORIES: Category[] = [
@@ -24,18 +24,13 @@ export const CATEGORIES: Category[] = [
 export const TRANSACTIONS: Transaction[] = [
   { id: '1', date: new Date('2024-10-01'), description: 'GARDENIAS', amount: 1071000, type: 'income', category: 'Ingresos' },
   { id: '2', date: new Date('2024-10-02'), description: 'EXTRA', amount: 476896.80, type: 'income', category: 'Ingresos' },
-  { id: '3', date: new Date('2024-10-05'), description: 'Alquiler', amount: 270000, type: 'expense', category: 'Alquiler', notes: '' },
-  { id: '4', date: new Date('2024-10-10'), description: 'Mercadopago', amount: 0, type: 'expense', category: 'Mercadopago', notes: '' },
-  { id: '5', date: new Date('2024-10-12'), description: 'Internet', amount: 22817, type: 'expense', category: 'Internet', notes: '' },
-  { id: '6', date: new Date('2024-10-14'), description: 'Gas', amount: 42298, type: 'expense', category: 'Gas', notes: '' },
-  { id: '7', date: new Date('2024-10-15'), description: 'Edenor', amount: 10003, type: 'expense', category: 'Edenor', notes: '' },
-  { id: '8', date: new Date('2024-10-20'), description: 'Naranja', amount: 1041409, type: 'expense', category: 'Naranja', notes: '' },
-  { id: '9', date: new Date('2024-10-25'), description: 'Galicia Prestamo', amount: 386206, type: 'expense', category: 'Galicia Prestamo', notes: '6 DE 6' },
-];
-
-export const CRYPTO_HOLDINGS: CryptoHolding[] = [
-  { id: '1', name: 'BTC', quantity: 0.12, price: 65000, valueUsd: 7800, valueArs: 7800000 },
-  { id: '2', name: 'ETH', quantity: 2.5, price: 3500, valueUsd: 8750, valueArs: 8750000 },
+  { id: '3', date: new Date('2024-10-05'), description: 'Alquiler', amount: 270000, type: 'expense', category: 'Alquiler', notes: '', paid: true },
+  { id: '4', date: new Date('2024-10-10'), description: 'Mercadopago', amount: 0, type: 'expense', category: 'Mercadopago', notes: '', paid: true },
+  { id: '5', date: new Date('2024-10-12'), description: 'Internet', amount: 22817, type: 'expense', category: 'Internet', notes: '', paid: false },
+  { id: '6', date: new Date('2024-10-14'), description: 'Gas', amount: 42298, type: 'expense', category: 'Gas', notes: '', paid: false },
+  { id: '7', date: new Date('2024-10-15'), description: 'Edenor', amount: 10003, type: 'expense', category: 'Edenor', notes: '', paid: false },
+  { id: '8', date: new Date('2024-10-20'), description: 'Naranja', amount: 1041409, type: 'expense', category: 'Naranja', notes: '', paid: false },
+  { id: '9', date: new Date('2024-10-25'), description: 'Galicia Prestamo', amount: 386206, type: 'expense', category: 'Galicia Prestamo', notes: '6 DE 6', paid: true },
 ];
 
 const calculateSpent = (category: string) => {

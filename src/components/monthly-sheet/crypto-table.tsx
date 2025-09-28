@@ -6,9 +6,12 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import type { CryptoHolding } from '@/lib/types';
+import { CryptoSearch } from './crypto-search';
 
 type CryptoTableProps = {
   holdings: CryptoHolding[];
+  onAddHolding: (coin: { id: string; name: string; symbol: string }, quantity: number) => void;
+  onRemoveHolding: (id: string) => void;
 };
 
 const formatCurrency = (value: number, currency = 'ARS') => {
@@ -26,7 +29,7 @@ const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-b
 );
 
 
-export function CryptoTable({ holdings }: CryptoTableProps) {
+export function CryptoTable({ holdings, onAddHolding, onRemoveHolding }: CryptoTableProps) {
   const totalCryptoUsd = holdings.reduce((sum, h) => sum + h.valueUsd, 0);
   const totalCryptoArs = holdings.reduce((sum, h) => sum + h.valueArs, 0);
 
@@ -36,6 +39,7 @@ export function CryptoTable({ holdings }: CryptoTableProps) {
         <CardTitle className="bg-purple-600 text-white m-0 p-2 rounded-t-lg text-base">CRIPTO</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
+        <CryptoSearch onAddHolding={onAddHolding} />
         <Table>
           <TableBody>
             {holdings.map((holding) => (
@@ -45,6 +49,11 @@ export function CryptoTable({ holdings }: CryptoTableProps) {
                 <TableCell className="text-right p-2">{formatCurrency(holding.price, 'USD')}</TableCell>
                 <TableCell className="text-right p-2">{formatCurrency(holding.valueUsd, 'USD')}</TableCell>
                 <TableCell className="text-right p-2">{formatCurrency(holding.valueArs, 'ARS')}</TableCell>
+                 <TableCell className="p-1 w-10 text-center align-middle">
+                  <button onClick={() => onRemoveHolding(holding.id)} className="text-red-500 hover:text-red-700">
+                    X
+                  </button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
