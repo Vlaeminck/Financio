@@ -26,7 +26,7 @@ export function MonthlySheet() {
     useEffect(() => {
         // Set initial date on client to avoid hydration mismatch
         if (!currentDate) {
-          setCurrentDate(new Date('2024-09-01T00:00:00Z'));
+          setCurrentDate(new Date('2024-10-01T00:00:00Z'));
         }
     }, [currentDate]);
 
@@ -112,13 +112,13 @@ export function MonthlySheet() {
         setAllTransactions(prev => prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t));
     }
     
-    const handleAddIncome = () => {
+    const handleAddIncome = (newIncomeData: { description: string; amount: number }) => {
         if (!currentDate) return;
         const newTransaction: Transaction = {
           id: `income-${Date.now()}`,
           date: new Date(currentDate),
-          description: '',
-          amount: 0,
+          description: newIncomeData.description,
+          amount: newIncomeData.amount,
           type: 'income',
           category: 'Ingresos',
         };
