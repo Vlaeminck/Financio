@@ -44,3 +44,9 @@ export type FearAndGreed = {
     timestamp: string;
     time_until_update?: string;
 };
+
+export type DolarType = 'cripto' | 'blue' | 'oficial';
+
+export type DolarRates = {
+  [key in DolarType]: number;
+};

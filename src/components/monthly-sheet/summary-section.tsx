@@ -1,9 +1,14 @@
 import { Card, CardContent } from '@/components/ui/card';
-import type { Transaction } from '@/lib/types';
+import type { Transaction, DolarRates, DolarType } from '@/lib/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 type SummarySectionProps = {
   transactions: Transaction[];
   arsRate: number;
+  dolarRates: DolarRates;
+  selectedDolarType: DolarType;
+  setSelectedDolarType: (type: DolarType) => void;
 };
 
 const formatCurrency = (value: number, currency: 'ARS' | 'USD', showNegativeSign = true) => {
@@ -27,7 +32,7 @@ const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-b
     </div>
 );
 
-export function SummarySection({ transactions, arsRate }: SummarySectionProps) {
+export function SummarySection({ transactions, arsRate, dolarRates, selectedDolarType, setSelectedDolarType }: SummarySectionProps) {
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const fixedExpense = transactions.filter(t => t.fixed).reduce((sum, t) => sum + t.amount, 0);
@@ -37,13 +42,35 @@ export function SummarySection({ transactions, arsRate }: SummarySectionProps) {
   const remainingPesos = totalIncome - totalExpense;
   const remainingUsd = arsRate > 0 ? remainingPesos / arsRate : 0;
 
+  const dolarTypeLabels: Record<DolarType, string> = {
+    cripto: 'Cripto',
+    blue: 'Blue',
+    oficial: 'Oficial',
+  };
+
+
   return (
     <div className="space-y-2">
         <SummaryBox title="GASTO FIJO" value={formatCurrency(fixedExpense, 'ARS', false)} bgColor="bg-green-200"/>
         <SummaryBox title="GASTO GENERAL" value={formatCurrency(totalExpense, 'ARS', false)} bgColor="bg-green-200"/>
         <SummaryBox title="EN DIGITAL" value={formatCurrency(digitalExpense, 'ARS', false)} bgColor="bg-transparent text-foreground"/>
         <SummaryBox title="RESTANTE PESOS" value={formatCurrency(remainingPesos, 'ARS')} bgColor="bg-yellow-300"/>
-        <SummaryBox title="RESTANTE USD" value={formatCurrency(remainingUsd, 'USD')} bgColor="bg-blue-400" textColor="text-white"/>
+        <div className="flex items-center gap-2">
+            <Select value={selectedDolarType} onValueChange={(value: DolarType) => setSelectedDolarType(value)}>
+                <SelectTrigger className="w-[120px] bg-blue-400 text-white font-bold border-none">
+                    <SelectValue placeholder="Tipo de Dólar" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="cripto">Cripto</SelectItem>
+                    <SelectItem value="blue">Blue</SelectItem>
+                    <SelectItem value="oficial">Oficial</SelectItem>
+                </SelectContent>
+            </Select>
+            <div className="p-2 flex justify-between items-center bg-blue-400 text-white text-sm rounded-md flex-grow">
+                <span className="font-bold">RESTANTE USD</span>
+                <span className="font-mono">{formatCurrency(remainingUsd, 'USD')}</span>
+            </div>
+        </div>
     </div>
   );
 }
