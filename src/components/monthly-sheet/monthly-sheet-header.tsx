@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { format, subMonths, addMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-export function MonthlySheetHeader() {
-  const [currentDate, setCurrentDate] = useState(new Date('2024-10-01'));
+type MonthlySheetHeaderProps = {
+  currentDate: Date;
+  setCurrentDate: (date: Date) => void;
+};
+
+export function MonthlySheetHeader({ currentDate, setCurrentDate }: MonthlySheetHeaderProps) {
 
   const handlePrevMonth = () => {
     setCurrentDate(subMonths(currentDate, 1));

@@ -1,7 +1,5 @@
-
 'use client';
 
-import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,6 +16,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 type ExpensesTableProps = {
   expenses: Transaction[];
+  onExpenseChange: (expense: Transaction) => void;
+  onAddExpense: () => void;
 };
 
 const formatCurrency = (value: number) => {
@@ -29,31 +29,13 @@ const formatCurrency = (value: number) => {
     }).format(value);
 };
 
-export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps) {
-  const [expenses, setExpenses] = useState(initialExpenses.map(e => ({...e, paid: e.amount > 0 ? false : e.notes === '6 DE 6' ? false : true })));
-
-  const handleExpenseChange = (id: string, field: keyof Transaction, value: any) => {
-    setExpenses(expenses.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
-  };
-
-   const handlePaidChange = (id: string, paid: boolean) => {
-    setExpenses(
-      expenses.map(exp => (exp.id === id ? { ...exp, paid } : exp))
-    );
-  };
-
-  const addNewExpense = () => {
-    const newExpense: Transaction & { paid: boolean } = {
-      id: `expense-${Date.now()}`,
-      date: new Date(),
-      description: '',
-      amount: 0,
-      type: 'expense',
-      category: 'Otros',
-      notes: '',
-      paid: false,
-    };
-    setExpenses([...expenses, newExpense]);
+export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: ExpensesTableProps) {
+  
+  const handleInputChange = (id: string, field: keyof Transaction, value: any) => {
+    const expense = expenses.find(exp => exp.id === id);
+    if (expense) {
+        onExpenseChange({ ...expense, [field]: value });
+    }
   };
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
@@ -61,7 +43,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
   return (
     <Card className="h-fit">
       <CardHeader className="p-0">
-        <CardTitle className="bg-purple-600 text-white m-0 p-2 rounded-t-lg text-base">GASTOS</CardTitle>
+        <CardTitle className="bg-primary text-primary-foreground m-0 p-2 rounded-t-lg text-base">GASTOS</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>
@@ -71,38 +53,37 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                 key={expense.id}
                 className={cn(
                   'border-b-0',
-                  (expense.amount > 0 && !expense.paid) && 'bg-red-200',
-                  (expense.paid || expense.amount === 0) && 'bg-green-200'
+                  !expense.paid && expense.amount > 0 ? 'bg-red-200' : 'bg-green-200'
                 )}
               >
                 <TableCell className="font-medium p-0">
                   <Input
                     type="text"
                     value={expense.category}
-                    onChange={(e) => handleExpenseChange(expense.id, 'category', e.target.value)}
-                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
+                    onChange={(e) => handleInputChange(expense.id, 'category', e.target.value)}
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
                 <TableCell className={cn("text-right font-medium p-0 w-[100px]")}>
                    <Input
                     type="number"
                     value={expense.amount}
-                    onChange={(e) => handleExpenseChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full rounded-none"
+                    onChange={(e) => handleInputChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right w-full rounded-none"
                   />
                 </TableCell>
                 <TableCell className="p-0 w-[80px]">
                    <Input
                     type="text"
                     value={expense.notes}
-                    onChange={(e) => handleExpenseChange(expense.id, 'notes', e.target.value)}
-                    className="h-full py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
+                    onChange={(e) => handleInputChange(expense.id, 'notes', e.target.value)}
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
                 <TableCell className="p-1 w-10 text-center align-middle">
                   <Checkbox
                     checked={expense.paid}
-                    onCheckedChange={(checked) => handlePaidChange(expense.id, !!checked)}
+                    onCheckedChange={(checked) => handleInputChange(expense.id, 'paid', !!checked)}
                     className="border-gray-500 rounded-sm h-5 w-5 border-2"
                   />
                 </TableCell>
@@ -115,7 +96,7 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
           </TableBody>
         </Table>
         <div className="p-2">
-            <Button onClick={addNewExpense} size="sm" className="w-full bg-green-800 hover:bg-green-900 text-white font-bold">
+            <Button onClick={onAddExpense} size="sm" className="w-full bg-green-800 hover:bg-green-900 text-white font-bold">
                 <Icons.add className="mr-2 h-4 w-4" />
                 Añadir Gasto
             </Button>
