@@ -11,6 +11,7 @@ export type Transaction = {
   valueUsd?: number;
   priceUsd?: number;
   paid?: boolean;
+  digital?: boolean;
 };
 
 export type Category = {

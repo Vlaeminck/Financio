@@ -38,6 +38,7 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [paid, setPaid] = useState(false);
+  const [digital, setDigital] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleAdd = () => {
@@ -48,10 +49,12 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
         amount: numericAmount,
         notes: '',
         paid,
+        digital,
       });
       setDescription('');
       setAmount('');
       setPaid(false);
+      setDigital(false);
       setOpen(false);
     }
   };
@@ -94,6 +97,10 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
           <div className="flex items-center space-x-2">
             <Checkbox id="paid" checked={paid} onCheckedChange={(checked) => setPaid(!!checked)} />
             <Label htmlFor="paid">¿Está Pagado?</Label>
+          </div>
+           <div className="flex items-center space-x-2">
+            <Checkbox id="digital" checked={digital} onCheckedChange={(checked) => setDigital(!!checked)} />
+            <Label htmlFor="digital">¿Es Digital?</Label>
           </div>
           <Button onClick={handleAdd}>Añadir</Button>
         </div>
