@@ -31,7 +31,7 @@ export function IncomeTable({ incomes, onIncomeChange, onAddIncome }: IncomeTabl
   return (
     <Card>
       <CardHeader className="p-0">
-        <CardTitle className="bg-purple-600 text-primary-foreground m-0 p-2 rounded-t-lg text-base">INGRESOS</CardTitle>
+        <CardTitle className="bg-primary text-primary-foreground m-0 p-2 rounded-t-lg text-base">INGRESOS</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>

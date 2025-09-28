@@ -125,7 +125,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
   return (
     <Card className="h-fit">
       <CardHeader className="p-0">
-        <CardTitle className="bg-purple-600 text-primary-foreground m-0 p-2 rounded-t-lg text-base">GASTOS</CardTitle>
+        <CardTitle className="bg-primary text-primary-foreground m-0 p-2 rounded-t-lg text-base">GASTOS</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>

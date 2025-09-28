@@ -49,7 +49,7 @@ export function CryptoTable({ holdings, fearAndGreed, onAddHolding, onRemoveHold
   return (
     <Card>
       <CardHeader className="p-0">
-        <CardTitle className="bg-purple-600 text-white m-0 p-2 rounded-t-lg text-base">CRIPTO</CardTitle>
+        <CardTitle className="bg-primary text-primary-foreground m-0 p-2 rounded-t-lg text-base">CRIPTO</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <CryptoSearch onAddHolding={onAddHolding} />
