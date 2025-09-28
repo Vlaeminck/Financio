@@ -35,12 +35,12 @@ export function MonthlySheet() {
                 </div>
                 <div className="lg:col-span-1 space-y-4">
                     <IncomeTable incomes={incomes} />
+                    <SummarySection transactions={transactions} />
                 </div>
                 <div className="lg:col-span-1 space-y-4">
                     <CryptoTable holdings={CRYPTO_HOLDINGS} />
                 </div>
             </div>
-            <SummarySection transactions={transactions} cryptoHoldings={CRYPTO_HOLDINGS} />
         </div>
     );
 }
