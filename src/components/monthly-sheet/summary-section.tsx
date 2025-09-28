@@ -30,7 +30,7 @@ const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-b
 export function SummarySection({ transactions, arsRate }: SummarySectionProps) {
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-  const fixedExpense = transactions.filter(t => t.amount > 0 && t.paid !== undefined).reduce((sum, t) => sum + t.amount, 0);
+  const fixedExpense = transactions.filter(t => t.fixed).reduce((sum, t) => sum + t.amount, 0);
   const digitalExpense = transactions.filter(t => t.digital).reduce((sum, t) => sum + t.amount, 0);
 
 

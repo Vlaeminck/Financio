@@ -18,6 +18,7 @@ import { Icons } from '@/components/icons';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 type ExpensesTableProps = {
   expenses: Transaction[];
@@ -40,6 +41,7 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
   const [amount, setAmount] = useState('');
   const [paid, setPaid] = useState(false);
   const [digital, setDigital] = useState(false);
+  const [fixed, setFixed] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleAdd = () => {
@@ -51,11 +53,13 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
         notes: '',
         paid,
         digital,
+        fixed,
       });
       setDescription('');
       setAmount('');
       setPaid(false);
       setDigital(false);
+      setFixed(false);
       setOpen(false);
     }
   };
@@ -77,7 +81,14 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
         </div>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="description">Nombre</Label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Label htmlFor="description">Nombre</Label>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>El nombre o descripción del gasto.</p>
+              </TooltipContent>
+            </Tooltip>
             <Input
               id="description"
               value={description}
@@ -86,7 +97,14 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="amount">Valor</Label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Label htmlFor="amount">Valor</Label>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>El monto total del gasto en pesos.</p>
+              </TooltipContent>
+            </Tooltip>
             <Input
               id="amount"
               type="number"
@@ -96,12 +114,37 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
             />
           </div>
           <div className="flex items-center space-x-2">
-            <Checkbox id="paid" checked={paid} onCheckedChange={(checked) => setPaid(!!checked)} />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Checkbox id="paid" checked={paid} onCheckedChange={(checked) => setPaid(!!checked)} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Marca si este gasto ya fue pagado.</p>
+              </TooltipContent>
+            </Tooltip>
             <Label htmlFor="paid">¿Está Pagado?</Label>
           </div>
            <div className="flex items-center space-x-2">
-            <Checkbox id="digital" checked={digital} onCheckedChange={(checked) => setDigital(!!checked)} />
+             <Tooltip>
+              <TooltipTrigger asChild>
+                <Checkbox id="digital" checked={digital} onCheckedChange={(checked) => setDigital(!!checked)} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Marca si el pago se realizó por un medio digital.</p>
+              </TooltipContent>
+            </Tooltip>
             <Label htmlFor="digital">¿Es Digital?</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+             <Tooltip>
+              <TooltipTrigger asChild>
+                <Checkbox id="fixed" checked={fixed} onCheckedChange={(checked) => setFixed(!!checked)} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Marca si es un gasto recurrente o fijo (ej. alquiler, servicios).</p>
+              </TooltipContent>
+            </Tooltip>
+            <Label htmlFor="fixed">¿Es Gasto Fijo?</Label>
           </div>
           <Button onClick={handleAdd}>Añadir</Button>
         </div>
