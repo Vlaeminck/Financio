@@ -60,22 +60,35 @@ export async function getCoinPrices(ids: string[]) {
   }
 }
 
-export async function getDolarCriptoRate() {
-  try {
-    const response = await fetch('https://dolarapi.com/v1/dolares/cripto', {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    });
-    if (!response.ok) {
-      console.error('Error fetching dolar api');
-      return null;
+async function getDolarRate(type: 'cripto' | 'blue' | 'oficial') {
+    try {
+        const response = await fetch(`https://dolarapi.com/v1/dolares/${type}`, {
+            next: { revalidate: 3600 } // Cache for 1 hour
+        });
+        if (!response.ok) {
+            console.error(`Error fetching dolar ${type}`);
+            return null;
+        }
+        const data = await response.json();
+        return data.venta;
+    } catch (error) {
+        console.error(`Error fetching dolar ${type} rate:`, error);
+        return null;
     }
-    const data = await response.json();
-    return data.venta; 
-  } catch (error) {
-    console.error('Error fetching dolar rate:', error);
-    return null;
-  }
 }
+
+export async function getDolarCriptoRate() {
+    return getDolarRate('cripto');
+}
+
+export async function getDolarBlueRate() {
+    return getDolarRate('blue');
+}
+
+export async function getDolarOficialRate() {
+    return getDolarRate('oficial');
+}
+
 
 export async function getFearAndGreedIndex() {
   try {

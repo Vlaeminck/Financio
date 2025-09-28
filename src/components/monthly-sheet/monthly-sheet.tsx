@@ -10,7 +10,7 @@ import { SummarySection } from './summary-section';
 import { TRANSACTIONS } from '@/lib/data';
 import type { Transaction, CryptoHolding, FearAndGreed } from '@/lib/types';
 import { getMonth, getYear } from 'date-fns';
-import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex } from '@/lib/actions';
+import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex, getDolarBlueRate, getDolarOficialRate } from '@/lib/actions';
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [];
 
@@ -18,7 +18,9 @@ export function MonthlySheet() {
     const [allTransactions, setAllTransactions] = useState<Transaction[]>(TRANSACTIONS);
     const [currentDate, setCurrentDate] = useState<Date | null>(null);
     const [cryptoHoldings, setCryptoHoldings] = useState<CryptoHolding[]>([]);
-    const [arsRate, setArsRate] = useState(1000);
+    const [dolarCripto, setDolarCripto] = useState(1000);
+    const [dolarBlue, setDolarBlue] = useState<number>();
+    const [dolarOficial, setDolarOficial] = useState<number>();
     const [fearAndGreed, setFearAndGreed] = useState<FearAndGreed | null>(null);
 
     useEffect(() => {
@@ -35,11 +37,15 @@ export function MonthlySheet() {
         }
     }, []);
 
-    const updateDolarRate = useCallback(async () => {
-        const rate = await getDolarCriptoRate();
-        if (rate) {
-            setArsRate(rate);
-        }
+    const updateDolarRates = useCallback(async () => {
+        const criptoRate = await getDolarCriptoRate();
+        if (criptoRate) setDolarCripto(criptoRate);
+        
+        const blueRate = await getDolarBlueRate();
+        if (blueRate) setDolarBlue(blueRate);
+
+        const oficialRate = await getDolarOficialRate();
+        if (oficialRate) setDolarOficial(oficialRate);
     }, []);
 
     const updateCryptoPrices = useCallback(async (holdingsToUpdate: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[], currentArsRate: number) => {
@@ -65,31 +71,31 @@ export function MonthlySheet() {
     }, []);
 
     useEffect(() => {
-        updateDolarRate();
+        updateDolarRates();
         updateFearAndGreedIndex();
-        const rateInterval = setInterval(updateDolarRate, 3600000); // refresh every hour
+        const rateInterval = setInterval(updateDolarRates, 3600000); // refresh every hour
         const fngInterval = setInterval(updateFearAndGreedIndex, 3600000); // refresh every hour
         return () => {
             clearInterval(rateInterval);
             clearInterval(fngInterval);
         }
-    }, [updateDolarRate, updateFearAndGreedIndex]);
+    }, [updateDolarRates, updateFearAndGreedIndex]);
 
     useEffect(() => {
         const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
         if(cryptoHoldings.length === 0 && typeof window !== 'undefined') { // ensure this runs on client
-            updateCryptoPrices(initialHoldings, arsRate);
+            updateCryptoPrices(initialHoldings, dolarCripto);
         }
-    }, [updateCryptoPrices, arsRate, cryptoHoldings.length]);
+    }, [updateCryptoPrices, dolarCripto, cryptoHoldings.length]);
     
     useEffect(() => {
         if (cryptoHoldings.length > 0) {
             const interval = setInterval(() => {
-                updateCryptoPrices(cryptoHoldings, arsRate);
+                updateCryptoPrices(cryptoHoldings, dolarCripto);
             }, 60000); // refresh every minute
             return () => clearInterval(interval);
         }
-    }, [cryptoHoldings, updateCryptoPrices, arsRate]);
+    }, [cryptoHoldings, updateCryptoPrices, dolarCripto]);
 
     const filteredTransactions = useMemo(() => {
         if (!currentDate) return [];
@@ -145,12 +151,12 @@ export function MonthlySheet() {
             };
             newHoldings = [...cryptoHoldings, newHolding];
         }
-        updateCryptoPrices(newHoldings, arsRate);
+        updateCryptoPrices(newHoldings, dolarCripto);
     };
 
     const handleRemoveCryptoHolding = (id: string) => {
         const newHoldings = cryptoHoldings.filter(h => h.id !== id);
-        updateCryptoPrices(newHoldings, arsRate);
+        updateCryptoPrices(newHoldings, dolarCripto);
     };
     
     const handleRemoveExpense = (id: string) => {
@@ -164,7 +170,13 @@ export function MonthlySheet() {
 
     return (
         <div className="space-y-4">
-            <MonthlySheetHeader currentDate={currentDate} setCurrentDate={setCurrentDate} />
+            <MonthlySheetHeader 
+                currentDate={currentDate} 
+                setCurrentDate={setCurrentDate} 
+                dolarCripto={dolarCripto}
+                dolarBlue={dolarBlue}
+                dolarOficial={dolarOficial}
+            />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-1 space-y-4">
                     <ExpensesTable 
@@ -180,7 +192,7 @@ export function MonthlySheet() {
                         onIncomeChange={handleTransactionChange}
                         onAddIncome={handleAddIncome}
                     />
-                    <SummarySection transactions={filteredTransactions} arsRate={arsRate}/>
+                    <SummarySection transactions={filteredTransactions} arsRate={dolarCripto}/>
                 </div>
                 <div className="lg:col-span-1 space-y-4">
                     <CryptoTable 

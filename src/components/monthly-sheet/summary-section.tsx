@@ -31,6 +31,8 @@ export function SummarySection({ transactions, arsRate }: SummarySectionProps) {
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const fixedExpense = transactions.filter(t => t.amount > 0 && t.paid !== undefined).reduce((sum, t) => sum + t.amount, 0);
+  const digitalExpense = transactions.filter(t => t.digital).reduce((sum, t) => sum + t.amount, 0);
+
 
   const remainingPesos = totalIncome - totalExpense;
   const remainingUsd = arsRate > 0 ? remainingPesos / arsRate : 0;
@@ -39,7 +41,7 @@ export function SummarySection({ transactions, arsRate }: SummarySectionProps) {
     <div className="space-y-2">
         <SummaryBox title="GASTO FIJO" value={formatCurrency(fixedExpense, 'ARS', false)} bgColor="bg-green-200"/>
         <SummaryBox title="GASTO GENERAL" value={formatCurrency(totalExpense, 'ARS', false)} bgColor="bg-green-200"/>
-        <SummaryBox title="EN DIGITAL" value={formatCurrency(1502733.00, 'ARS', false)} bgColor="bg-transparent text-foreground"/>
+        <SummaryBox title="EN DIGITAL" value={formatCurrency(digitalExpense, 'ARS', false)} bgColor="bg-transparent text-foreground"/>
         <SummaryBox title="RESTANTE PESOS" value={formatCurrency(remainingPesos, 'ARS')} bgColor="bg-yellow-300"/>
         <SummaryBox title="RESTANTE USD" value={formatCurrency(remainingUsd, 'USD')} bgColor="bg-blue-400" textColor="text-white"/>
     </div>
