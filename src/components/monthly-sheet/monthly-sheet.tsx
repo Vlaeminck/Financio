@@ -25,10 +25,10 @@ export function MonthlySheet() {
 
     useEffect(() => {
         // Set initial date on client to avoid hydration mismatch
-        if (typeof window !== 'undefined') {
-          setCurrentDate(new Date('2024-10-01'));
+        if (!currentDate) {
+          setCurrentDate(new Date('2024-10-01T00:00:00'));
         }
-    }, []);
+    }, [currentDate]);
 
     const updateDolarRate = useCallback(async () => {
         const rate = await getDolarCriptoRate();
@@ -67,9 +67,10 @@ export function MonthlySheet() {
 
     useEffect(() => {
         const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
-        setCryptoHoldings(initialHoldings);
-        updateCryptoPrices(initialHoldings, arsRate);
-    }, [updateCryptoPrices, arsRate]);
+        if(cryptoHoldings.length === 0) {
+            updateCryptoPrices(initialHoldings, arsRate);
+        }
+    }, [updateCryptoPrices, arsRate, cryptoHoldings.length]);
     
     useEffect(() => {
         if (cryptoHoldings.length > 0) {
@@ -88,27 +89,37 @@ export function MonthlySheet() {
         );
     }, [allTransactions, currentDate]);
 
-    const expenses = useMemo(() => filteredTransactions.filter(t => t.type === 'expense'), [filteredTransactions]);
-    const incomes = useMemo(() => filteredTransactions.filter(t => t.type === 'income'), [filteredTransactions]);
+    const expenses = useMemo(() => filteredTransactions.filter(t => t.type === 'expense').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
+    const incomes = useMemo(() => filteredTransactions.filter(t => t.type === 'income').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
     
     const handleTransactionChange = (updatedTransaction: Transaction) => {
         setAllTransactions(prev => prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t));
     }
     
-    const handleAddTransaction = (type: 'income' | 'expense') => {
+    const handleAddIncome = () => {
         if (!currentDate) return;
         const newTransaction: Transaction = {
-          id: `${type}-${Date.now()}`,
+          id: `income-${Date.now()}`,
           date: new Date(currentDate),
           description: '',
           amount: 0,
-          type: type,
-          category: type === 'expense' ? 'Otros' : 'Ingresos',
-          notes: '',
-          paid: type === 'expense' ? false : undefined,
+          type: 'income',
+          category: 'Ingresos',
         };
         setAllTransactions(prev => [...prev, newTransaction]);
     }
+
+    const handleAddExpense = (newExpenseData: Omit<Transaction, 'id' | 'date' | 'type' | 'category'>) => {
+        if (!currentDate) return;
+        const newTransaction: Transaction = {
+            ...newExpenseData,
+            id: `expense-${Date.now()}`,
+            date: new Date(currentDate),
+            type: 'expense',
+            category: newExpenseData.description, // Or a default category
+        };
+        setAllTransactions(prev => [...prev, newTransaction]);
+    };
     
     const handleAddCryptoHolding = (coin: { id: string; name: string; symbol: string }, quantity: number) => {
         const existingHolding = cryptoHoldings.find(h => h.id === coin.id);
@@ -145,14 +156,14 @@ export function MonthlySheet() {
                     <ExpensesTable 
                         expenses={expenses}
                         onExpenseChange={handleTransactionChange}
-                        onAddExpense={() => handleAddTransaction('expense')}
+                        onAddExpense={handleAddExpense}
                     />
                 </div>
                 <div className="lg:col-span-1 space-y-4">
                     <IncomeTable 
                         incomes={incomes}
                         onIncomeChange={handleTransactionChange}
-                        onAddIncome={() => handleAddTransaction('income')}
+                        onAddIncome={handleAddIncome}
                     />
                     <SummarySection transactions={filteredTransactions} arsRate={arsRate}/>
                 </div>

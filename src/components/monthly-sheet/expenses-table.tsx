@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -15,11 +16,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
 
 type ExpensesTableProps = {
   expenses: Transaction[];
   onExpenseChange: (expense: Transaction) => void;
-  onAddExpense: () => void;
+  onAddExpense: (newExpense: Omit<Transaction, 'id' | 'date' | 'type' | 'category' | 'description'> & { description: string }) => void;
 };
 
 const formatCurrency = (value: number) => {
@@ -30,6 +33,75 @@ const formatCurrency = (value: number) => {
       maximumFractionDigits: 0,
     }).format(value);
 };
+
+function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['onAddExpense'] }) {
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState('');
+  const [paid, setPaid] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleAdd = () => {
+    const numericAmount = parseFloat(amount);
+    if (description && !isNaN(numericAmount)) {
+      onAddExpense({
+        description,
+        amount: numericAmount,
+        notes: '',
+        paid,
+      });
+      setDescription('');
+      setAmount('');
+      setPaid(false);
+      setOpen(false);
+    }
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button size="sm" className="w-full bg-green-800 hover:bg-green-900 text-white font-bold">
+          <Icons.add className="mr-2 h-4 w-4" />
+          Añadir Gasto
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 space-y-4">
+        <div className="space-y-2">
+          <h4 className="font-medium leading-none">Añadir Nuevo Gasto</h4>
+          <p className="text-sm text-muted-foreground">
+            Introduce los detalles de tu nuevo gasto.
+          </p>
+        </div>
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Nombre</Label>
+            <Input
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Ej: Supermercado"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="amount">Valor</Label>
+            <Input
+              id="amount"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="paid" checked={paid} onCheckedChange={(checked) => setPaid(!!checked)} />
+            <Label htmlFor="paid">¿Está Pagado?</Label>
+          </div>
+          <Button onClick={handleAdd}>Añadir</Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 
 export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: ExpensesTableProps) {
   
@@ -69,8 +141,8 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: Expen
                 <TableCell className="font-medium p-0">
                   <Input
                     type="text"
-                    value={expense.category}
-                    onChange={(e) => handleInputChange(expense.id, 'category', e.target.value)}
+                    value={expense.description}
+                    onChange={(e) => handleInputChange(expense.id, 'description', e.target.value)}
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
@@ -106,10 +178,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: Expen
           </TableBody>
         </Table>
         <div className="p-2">
-            <Button onClick={onAddExpense} size="sm" className="w-full bg-green-800 hover:bg-green-900 text-white font-bold">
-                <Icons.add className="mr-2 h-4 w-4" />
-                Añadir Gasto
-            </Button>
+            <AddExpenseForm onAddExpense={onAddExpense} />
         </div>
       </CardContent>
     </Card>
