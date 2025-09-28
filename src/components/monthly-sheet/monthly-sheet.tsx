@@ -26,7 +26,7 @@ export function MonthlySheet() {
     useEffect(() => {
         // Set initial date on client to avoid hydration mismatch
         if (!currentDate) {
-          setCurrentDate(new Date('2024-10-01T00:00:00'));
+          setCurrentDate(new Date('2024-09-01T00:00:00Z'));
         }
     }, [currentDate]);
 
@@ -67,7 +67,7 @@ export function MonthlySheet() {
 
     useEffect(() => {
         const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
-        if(cryptoHoldings.length === 0) {
+        if(cryptoHoldings.length === 0 && typeof window !== 'undefined') { // ensure this runs on client
             updateCryptoPrices(initialHoldings, arsRate);
         }
     }, [updateCryptoPrices, arsRate, cryptoHoldings.length]);
@@ -143,6 +143,10 @@ export function MonthlySheet() {
         updateCryptoPrices(newHoldings, arsRate);
     };
     
+    const handleRemoveExpense = (id: string) => {
+        setAllTransactions(prev => prev.filter(t => t.id !== id));
+    };
+
     if (!currentDate) {
         // Render a loading state or nothing while date is being set
         return null;
@@ -157,6 +161,7 @@ export function MonthlySheet() {
                         expenses={expenses}
                         onExpenseChange={handleTransactionChange}
                         onAddExpense={handleAddExpense}
+                        onRemoveExpense={handleRemoveExpense}
                     />
                 </div>
                 <div className="lg:col-span-1 space-y-4">

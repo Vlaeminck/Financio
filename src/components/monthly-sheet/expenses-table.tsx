@@ -23,6 +23,7 @@ type ExpensesTableProps = {
   expenses: Transaction[];
   onExpenseChange: (expense: Transaction) => void;
   onAddExpense: (newExpense: Omit<Transaction, 'id' | 'date' | 'type' | 'category' | 'description'> & { description: string }) => void;
+  onRemoveExpense: (id: string) => void;
 };
 
 const formatCurrency = (value: number) => {
@@ -110,7 +111,7 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
 }
 
 
-export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: ExpensesTableProps) {
+export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemoveExpense }: ExpensesTableProps) {
   
   const handleInputChange = (id: string, field: keyof Transaction, value: any) => {
     const expense = expenses.find(exp => exp.id === id);
@@ -133,6 +134,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: Expen
                     <TableHead className="h-auto p-2 font-medium">Nombre</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Valor</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nota</TableHead>
+                    <TableHead className="h-auto p-2 w-10"></TableHead>
                     <TableHead className="h-auto p-2 w-10"></TableHead>
                 </TableRow>
             </TableHeader>
@@ -176,11 +178,16 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense }: Expen
                     className="border-gray-500 rounded-sm h-5 w-5 border-2"
                   />
                 </TableCell>
+                 <TableCell className="p-1 w-10 text-center align-middle">
+                  <button onClick={() => onRemoveExpense(expense.id)} className="text-red-500 hover:text-red-700 font-bold">
+                    X
+                  </button>
+                </TableCell>
               </TableRow>
             ))}
             <TableRow className="font-bold bg-green-200 border-b-0">
                 <TableCell className="p-2">GASTO GENERAL</TableCell>
-                <TableCell className="text-right p-2" colSpan={3}>{formatCurrency(totalExpenses)}</TableCell>
+                <TableCell className="text-right p-2" colSpan={4}>{formatCurrency(totalExpenses)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
