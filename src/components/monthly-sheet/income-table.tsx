@@ -49,40 +49,37 @@ export function IncomeTable({ incomes: initialIncomes }: IncomeTableProps) {
           <TableBody>
             {incomes.map((income) => (
               <TableRow key={income.id}>
-                <TableCell className="font-medium px-2 py-1 w-auto">
+                <TableCell className="font-medium p-0">
                    <Input
                     type="text"
                     value={income.description}
                     onChange={(e) => handleIncomeChange(income.id, 'description', e.target.value)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring"
-                    style={{width: `${(income.description.length || 15)}ch`}}
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
+                    
                   />
                 </TableCell>
-                <TableCell className="text-right px-2 py-1 w-auto">
+                <TableCell className="text-right p-0">
                    <Input
                     type="number"
                     value={income.amount}
                     onChange={(e) => handleIncomeChange(income.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right"
-                     style={{width: `${(income.amount.toString().length || 8)}ch`}}
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
                   />
                 </TableCell>
-                <TableCell className="text-right px-2 py-1 w-auto">
+                <TableCell className="text-right p-0">
                   <Input
                     type="number"
                     value={income.valueUsd}
                     onChange={(e) => handleIncomeChange(income.id, 'valueUsd', parseFloat(e.target.value) || 0)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right"
-                    style={{width: `${(income.valueUsd?.toString().length || 8)}ch`}}
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
                   />
                 </TableCell>
-                <TableCell className="text-right px-2 py-1 w-auto">
+                <TableCell className="text-right p-0">
                    <Input
                     type="number"
                     value={income.priceUsd}
                     onChange={(e) => handleIncomeChange(income.id, 'priceUsd', parseFloat(e.target.value) || 0)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right"
-                    style={{width: `${(income.priceUsd?.toString().length || 8)}ch`}}
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right rounded-none"
                   />
                 </TableCell>
               </TableRow>

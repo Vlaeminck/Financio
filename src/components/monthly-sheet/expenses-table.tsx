@@ -73,43 +73,43 @@ export function ExpensesTable({ expenses: initialExpenses }: ExpensesTableProps)
                   expense.paid && 'bg-green-200'
                 )}
               >
-                <TableCell className="font-medium px-2 py-1 w-auto">
+                <TableCell className="font-medium p-0">
                   <Input
                     type="text"
                     value={expense.category}
                     onChange={(e) => handleExpenseChange(expense.id, 'category', e.target.value)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring w-full"
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className={cn("text-right font-medium px-2 py-1 w-auto")}>
+                <TableCell className={cn("text-right font-medium p-0")}>
                    <Input
                     type="number"
                     value={expense.amount}
                     onChange={(e) => handleExpenseChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring text-right w-full"
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className="px-2 py-1 w-auto">
+                <TableCell className="p-0">
                    <Input
                     type="text"
                     value={expense.notes}
                     onChange={(e) => handleExpenseChange(expense.id, 'notes', e.target.value)}
-                    className="h-7 p-1 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring w-full"
+                    className="h-full p-2 text-sm bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className="px-2 py-1 w-10 text-center">
+                <TableCell className="p-1 w-10 text-center align-middle">
                   <Checkbox
                     checked={expense.paid}
                     onCheckedChange={(checked) => handlePaidChange(expense.id, !!checked)}
-                    className="border-gray-500"
+                    className="border-gray-500 rounded-sm"
                   />
                 </TableCell>
               </TableRow>
             ))}
             <TableRow className="font-bold bg-green-200 border-b-0">
-                <TableCell className="px-2 py-1">GASTO GENERAL</TableCell>
-                <TableCell className="text-right px-2 py-1">${formatCurrency(totalExpenses)}</TableCell>
-                <TableCell className="px-2 py-1" colSpan={2}></TableCell>
+                <TableCell className="p-2">GASTO GENERAL</TableCell>
+                <TableCell className="text-right p-2">${formatCurrency(totalExpenses)}</TableCell>
+                <TableCell className="p-2" colSpan={2}></TableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -31,11 +31,11 @@ export function CryptoTable({ holdings }: CryptoTableProps) {
           <TableBody>
             {holdings.map((holding) => (
               <TableRow key={holding.id}>
-                <TableCell className="font-medium px-2 py-1">{holding.name}</TableCell>
-                <TableCell className="text-right px-2 py-1">{holding.quantity}</TableCell>
-                <TableCell className="text-right px-2 py-1">{formatCurrency(holding.price, 'USD')}</TableCell>
-                <TableCell className="text-right px-2 py-1">{formatCurrency(holding.valueUsd, 'USD')}</TableCell>
-                <TableCell className="text-right px-2 py-1">{formatCurrency(holding.valueArs, 'ARS')}</TableCell>
+                <TableCell className="font-medium p-2">{holding.name}</TableCell>
+                <TableCell className="text-right p-2">{holding.quantity}</TableCell>
+                <TableCell className="text-right p-2">{formatCurrency(holding.price, 'USD')}</TableCell>
+                <TableCell className="text-right p-2">{formatCurrency(holding.valueUsd, 'USD')}</TableCell>
+                <TableCell className="text-right p-2">{formatCurrency(holding.valueArs, 'ARS')}</TableCell>
               </TableRow>
             ))}
           </TableBody>
