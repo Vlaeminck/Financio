@@ -7,6 +7,9 @@ export type Transaction = {
   amount: number;
   type: 'income' | 'expense';
   category: string; // category value
+  notes?: string;
+  valueUsd?: number;
+  priceUsd?: number;
 };
 
 export type Category = {
@@ -21,3 +24,12 @@ export type Budget = {
   amount: number;
   spent: number;
 };
+
+export type CryptoHolding = {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+  valueUsd: number;
+  valueArs: number;
+}

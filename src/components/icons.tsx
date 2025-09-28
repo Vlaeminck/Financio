@@ -25,13 +25,17 @@ import {
   TrendingDown,
   CircleHelp,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Sheet as SheetIcon,
+  Bitcoin,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
 
 export const Icons = {
   logo: Landmark,
-  dashboard: LayoutDashboard,
+  dashboard: SheetIcon,
   transactions: ArrowRightLeft,
   budgets: Target,
   reports: LineChart,
@@ -46,6 +50,9 @@ export const Icons = {
   growth: TrendingUp,
   help: CircleHelp,
   ai: Sparkles,
+  chevronLeft: ChevronLeft,
+  chevronRight: ChevronRight,
+  crypto: Bitcoin,
 
   // Categories
   groceries: ShoppingCart,

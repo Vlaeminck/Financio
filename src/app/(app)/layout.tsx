@@ -21,23 +21,13 @@ import type { ReactNode } from 'react';
 const navItems = [
   {
     href: '/dashboard',
-    label: 'Panel',
+    label: 'Planilla Mensual',
     icon: Icons.dashboard,
   },
   {
     href: '/transactions',
     label: 'Transacciones',
     icon: Icons.transactions,
-  },
-  {
-    href: '/budgets',
-    label: 'Presupuestos',
-    icon: Icons.budgets,
-  },
-  {
-    href: '/reports',
-    label: 'Informes',
-    icon: Icons.reports,
   },
 ];
 
