@@ -12,10 +12,7 @@ import type { Transaction, CryptoHolding, FearAndGreed } from '@/lib/types';
 import { getMonth, getYear } from 'date-fns';
 import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex } from '@/lib/actions';
 
-const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [
-  { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', quantity: 0.12 },
-  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', quantity: 2.5 },
-];
+const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [];
 
 export function MonthlySheet() {
     const [allTransactions, setAllTransactions] = useState<Transaction[]>(TRANSACTIONS);
