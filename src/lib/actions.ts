@@ -1,6 +1,11 @@
+
 'use server';
 
 import { autoCategorizeExpense } from '@/ai/flows/auto-categorize-expenses';
+import { db } from './firebase';
+import { collection, writeBatch, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { TRANSACTIONS } from './data';
+import type { Transaction } from './types';
 
 export async function suggestCategory(description: string) {
   if (!description) {
@@ -105,4 +110,29 @@ export async function getFearAndGreedIndex() {
     console.error('Error fetching Fear & Greed Index:', error);
     return null;
   }
+}
+
+export async function seedData() {
+  const batch = writeBatch(db);
+  const transactionsCollection = collection(db, 'transactions');
+  
+  TRANSACTIONS.forEach((transaction: Omit<Transaction, 'id'>) => {
+    const docRef = doc(transactionsCollection);
+    batch.set(docRef, transaction);
+  });
+  
+  await batch.commit();
+}
+
+export async function deleteAllData() {
+  const transactionsCollection = collection(db, 'transactions');
+  const querySnapshot = await getDocs(transactionsCollection);
+  
+  const batch = writeBatch(db);
+  
+  querySnapshot.forEach((document) => {
+    batch.delete(document.ref);
+  });
+  
+  await batch.commit();
 }

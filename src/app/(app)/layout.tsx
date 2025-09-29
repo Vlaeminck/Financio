@@ -30,6 +30,11 @@ const navItems = [
     label: 'Transacciones',
     icon: Icons.transactions,
   },
+  {
+    href: '/settings',
+    label: 'Configuración',
+    icon: Icons.settings,
+  },
 ];
 
 const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
