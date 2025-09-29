@@ -9,7 +9,7 @@ import { CryptoTable } from './crypto-table';
 import { SummarySection } from './summary-section';
 import { TRANSACTIONS } from '@/lib/data';
 import type { Transaction, CryptoHolding, FearAndGreed, DolarType } from '@/lib/types';
-import { getMonth, getYear } from 'date-fns';
+import { getMonth, getYear, addMonths } from 'date-fns';
 import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex, getDolarBlueRate, getDolarOficialRate } from '@/lib/actions';
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [];
@@ -181,6 +181,30 @@ export function MonthlySheet() {
         setAllTransactions(prev => prev.filter(t => t.id !== id));
     };
 
+    const handleReplicateMonth = () => {
+        if (!currentDate) return;
+        
+        const nextMonthDate = addMonths(currentDate, 1);
+
+        const transactionsToReplicate = allTransactions.filter(t => 
+            getYear(t.date) === getYear(currentDate) && 
+            getMonth(t.date) === getMonth(currentDate)
+        );
+
+        const replicatedTransactions = transactionsToReplicate.map(t => {
+            const newTransaction = { ...t };
+            newTransaction.id = `${t.type}-${Date.now()}-${Math.random()}`;
+            newTransaction.date = new Date(nextMonthDate);
+            if (newTransaction.type === 'expense') {
+                newTransaction.paid = false;
+            }
+            return newTransaction;
+        });
+
+        setAllTransactions(prev => [...prev, ...replicatedTransactions]);
+        setCurrentDate(nextMonthDate);
+    };
+
     if (!currentDate) {
         // Render a loading state or nothing while date is being set
         return null;
@@ -190,7 +214,8 @@ export function MonthlySheet() {
         <div className="space-y-4">
             <MonthlySheetHeader 
                 currentDate={currentDate} 
-                setCurrentDate={setCurrentDate} 
+                setCurrentDate={setCurrentDate}
+                onReplicateMonth={handleReplicateMonth}
                 dolarCripto={dolarRates.cripto}
                 dolarBlue={dolarRates.blue}
                 dolarOficial={dolarRates.oficial}

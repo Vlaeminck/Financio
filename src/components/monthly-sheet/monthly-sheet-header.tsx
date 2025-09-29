@@ -4,10 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { format, subMonths, addMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type MonthlySheetHeaderProps = {
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
+  onReplicateMonth: () => void;
   dolarCripto?: number;
   dolarBlue?: number;
   dolarOficial?: number;
@@ -24,6 +36,7 @@ const formatCurrency = (value: number) => {
 export function MonthlySheetHeader({
   currentDate,
   setCurrentDate,
+  onReplicateMonth,
   dolarCripto,
   dolarBlue,
   dolarOficial
@@ -49,6 +62,26 @@ export function MonthlySheetHeader({
         <Button variant="outline" size="icon" onClick={handleNextMonth}>
           <Icons.chevronRight className="h-4 w-4" />
         </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Icons.report className="h-4 w-4" />
+              <span className="sr-only">Replicar Mes</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Replicar transacciones?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esto copiará todos los ingresos y gastos de {format(currentDate, 'MMMM yyyy', { locale: es })} a {format(addMonths(currentDate, 1), 'MMMM yyyy', { locale: es })}. El estado de "pagado" de los gastos se reiniciará. ¿Deseas continuar?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={onReplicateMonth}>Replicar</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <div className="hidden md:flex items-center gap-4 text-sm">
         {dolarCripto && (
