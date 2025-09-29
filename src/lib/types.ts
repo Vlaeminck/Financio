@@ -1,8 +1,10 @@
 import type { LucideIcon } from 'lucide-react';
+import type { Timestamp } from 'firebase/firestore';
+
 
 export type Transaction = {
   id: string;
-  date: Date;
+  date: Date | Timestamp;
   description: string;
   amount: number;
   type: 'income' | 'expense';
@@ -17,7 +19,7 @@ export type Transaction = {
 
 export type Category = {
   value: string;
-  label: string;
+  label:string;
   icon: LucideIcon;
 };
 

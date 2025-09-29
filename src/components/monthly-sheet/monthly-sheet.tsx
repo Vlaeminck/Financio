@@ -7,27 +7,46 @@ import { ExpensesTable } from './expenses-table';
 import { IncomeTable } from './income-table';
 import { CryptoTable } from './crypto-table';
 import { SummarySection } from './summary-section';
-import { TRANSACTIONS } from '@/lib/data';
 import type { Transaction, CryptoHolding, FearAndGreed, DolarType } from '@/lib/types';
-import { getMonth, getYear, addMonths } from 'date-fns';
+import { getMonth, getYear, addMonths, Timestamp } from 'date-fns';
 import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex, getDolarBlueRate, getDolarOficialRate } from '@/lib/actions';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, where, query, getDocs } from 'firebase/firestore';
+
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [];
 
 export function MonthlySheet() {
-    const [allTransactions, setAllTransactions] = useState<Transaction[]>(TRANSACTIONS);
+    const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
     const [currentDate, setCurrentDate] = useState<Date | null>(null);
     const [cryptoHoldings, setCryptoHoldings] = useState<CryptoHolding[]>([]);
     const [dolarRates, setDolarRates] = useState({ cripto: 1000, blue: 1000, oficial: 1000 });
     const [selectedDolarType, setSelectedDolarType] = useState<DolarType>('cripto');
     const [fearAndGreed, setFearAndGreed] = useState<FearAndGreed | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Set initial date on client to avoid hydration mismatch
         if (!currentDate) {
           setCurrentDate(new Date('2024-10-01T00:00:00Z'));
         }
     }, [currentDate]);
+
+    useEffect(() => {
+      const unsubscribe = onSnapshot(collection(db, "transactions"), (snapshot) => {
+          const transactionsData = snapshot.docs.map(doc => {
+              const data = doc.data();
+              return {
+                  ...data,
+                  id: doc.id,
+                  date: (data.date as any).toDate(),
+              } as Transaction;
+          });
+          setAllTransactions(transactionsData);
+          setLoading(false);
+      });
+
+      return () => unsubscribe();
+  }, []);
 
     const updateFearAndGreedIndex = useCallback(async () => {
         const data = await getFearAndGreedIndex();
@@ -87,23 +106,21 @@ export function MonthlySheet() {
 
     useEffect(() => {
         const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
-        if(cryptoHoldings.length === 0 && typeof window !== 'undefined') { // ensure this runs on client
+        if(cryptoHoldings.length === 0 && typeof window !== 'undefined') {
             updateCryptoPrices(initialHoldings, arsRate);
         }
     }, [updateCryptoPrices, arsRate, cryptoHoldings.length]);
     
     useEffect(() => {
-        // This effect will re-calculate ARS values when the selected dolar type changes.
         updateCryptoPrices(cryptoHoldings, arsRate);
     }, [arsRate, updateCryptoPrices]);
 
     useEffect(() => {
         if (cryptoHoldings.length > 0) {
             const interval = setInterval(() => {
-                // We pass `cryptoHoldings` directly to `updateCryptoPrices` to avoid stale state in closure
                 setCryptoHoldings(currentHoldings => {
                     updateCryptoPrices(currentHoldings, arsRate);
-                    return currentHoldings; // No state change here, letting updateCryptoPrices handle it
+                    return currentHoldings;
                 });
             }, 60000); // refresh every minute
             return () => clearInterval(interval);
@@ -122,33 +139,36 @@ export function MonthlySheet() {
     const expenses = useMemo(() => filteredTransactions.filter(t => t.type === 'expense').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
     const incomes = useMemo(() => filteredTransactions.filter(t => t.type === 'income').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
     
-    const handleTransactionChange = (updatedTransaction: Transaction) => {
-        setAllTransactions(prev => prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t));
+    const handleTransactionChange = async (updatedTransaction: Transaction) => {
+        const { id, ...dataToUpdate } = updatedTransaction;
+        const docRef = doc(db, 'transactions', id);
+        await updateDoc(docRef, {
+          ...dataToUpdate,
+          date: updatedTransaction.date
+        });
     }
     
-    const handleAddIncome = (newIncomeData: { description: string; amount: number }) => {
+    const handleAddIncome = async (newIncomeData: { description: string; amount: number }) => {
         if (!currentDate) return;
-        const newTransaction: Transaction = {
-          id: `income-${Date.now()}`,
-          date: new Date(currentDate),
+        const newTransaction = {
+          date: currentDate,
           description: newIncomeData.description,
           amount: newIncomeData.amount,
           type: 'income',
           category: 'Ingresos',
         };
-        setAllTransactions(prev => [...prev, newTransaction]);
+        await addDoc(collection(db, 'transactions'), newTransaction);
     }
 
-    const handleAddExpense = (newExpenseData: Omit<Transaction, 'id' | 'date' | 'type' | 'category'>) => {
+    const handleAddExpense = async (newExpenseData: Omit<Transaction, 'id' | 'date' | 'type' | 'category'>) => {
         if (!currentDate) return;
-        const newTransaction: Transaction = {
+        const newTransaction = {
             ...newExpenseData,
-            id: `expense-${Date.now()}`,
-            date: new Date(currentDate),
+            date: currentDate,
             type: 'expense',
-            category: newExpenseData.description, // Or a default category
+            category: newExpenseData.description,
         };
-        setAllTransactions(prev => [...prev, newTransaction]);
+        await addDoc(collection(db, 'transactions'), newTransaction);
     };
     
     const handleAddCryptoHolding = (coin: { id: string; name: string; symbol: string }, quantity: number) => {
@@ -173,40 +193,49 @@ export function MonthlySheet() {
         updateCryptoPrices(newHoldings, arsRate);
     };
     
-    const handleRemoveExpense = (id: string) => {
-        setAllTransactions(prev => prev.filter(t => t.id !== id));
+    const handleRemoveExpense = async (id: string) => {
+        await deleteDoc(doc(db, 'transactions', id));
     };
 
-    const handleRemoveIncome = (id: string) => {
-        setAllTransactions(prev => prev.filter(t => t.id !== id));
+    const handleRemoveIncome = async (id: string) => {
+        await deleteDoc(doc(db, 'transactions', id));
     };
 
-    const handleReplicateMonth = () => {
+    const handleReplicateMonth = async () => {
         if (!currentDate) return;
-        
         const nextMonthDate = addMonths(currentDate, 1);
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+    
+        const startOfMonth = new Date(currentYear, currentMonth, 1);
+        const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
 
-        const transactionsToReplicate = allTransactions.filter(t => 
-            getYear(t.date) === getYear(currentDate) && 
-            getMonth(t.date) === getMonth(currentDate)
+        const q = query(
+          collection(db, "transactions"),
+          where("date", ">=", startOfMonth),
+          where("date", "<=", endOfMonth)
         );
-
-        const replicatedTransactions = transactionsToReplicate.map(t => {
+        
+        const querySnapshot = await getDocs(q);
+        
+        const batch = writeBatch(db);
+    
+        querySnapshot.forEach(document => {
+            const t = document.data() as Omit<Transaction, 'id' | 'date'>;
             const newTransaction = { ...t };
-            newTransaction.id = `${t.type}-${Date.now()}-${Math.random()}`;
-            newTransaction.date = new Date(nextMonthDate);
             if (newTransaction.type === 'expense') {
                 newTransaction.paid = false;
             }
-            return newTransaction;
+            const newDocRef = doc(collection(db, "transactions"));
+            batch.set(newDocRef, { ...newTransaction, date: nextMonthDate });
         });
-
-        setAllTransactions(prev => [...prev, ...replicatedTransactions]);
+    
+        await batch.commit();
         setCurrentDate(nextMonthDate);
     };
 
-    if (!currentDate) {
-        // Render a loading state or nothing while date is being set
+
+    if (!currentDate || loading) {
         return null;
     }
 
