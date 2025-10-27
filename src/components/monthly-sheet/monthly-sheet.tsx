@@ -12,6 +12,7 @@ import { getMonth, getYear, addMonths, Timestamp } from 'date-fns';
 import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex, getDolarBlueRate, getDolarOficialRate } from '@/lib/actions';
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, where, query, getDocs } from 'firebase/firestore';
+import { cn } from '@/lib/utils';
 
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [];
@@ -24,6 +25,21 @@ export function MonthlySheet() {
     const [selectedDolarType, setSelectedDolarType] = useState<DolarType>('cripto');
     const [fearAndGreed, setFearAndGreed] = useState<FearAndGreed | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isCryptoEnabled, setIsCryptoEnabled] = useState(false);
+
+     useEffect(() => {
+        const enabled = localStorage.getItem('cryptoEnabled') === 'true';
+        setIsCryptoEnabled(enabled);
+
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'cryptoEnabled') {
+                setIsCryptoEnabled(event.newValue === 'true');
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
 
     useEffect(() => {
         if (!currentDate) {
@@ -49,17 +65,18 @@ export function MonthlySheet() {
   }, []);
 
     const updateFearAndGreedIndex = useCallback(async () => {
+        if (!isCryptoEnabled) return;
         const data = await getFearAndGreedIndex();
         if (data) {
             setFearAndGreed(data);
         }
-    }, []);
+    }, [isCryptoEnabled]);
 
     const updateDolarRates = useCallback(async () => {
-        const [criptoRate, blueRate, oficialRate] = await Promise.all([
-            getDolarCriptoRate(),
+        const [blueRate, oficialRate, criptoRate] = await Promise.all([
             getDolarBlueRate(),
-            getDolarOficialRate()
+            getDolarOficialRate(),
+            isCryptoEnabled ? getDolarCriptoRate() : Promise.resolve(null),
         ]);
         
         setDolarRates(prev => ({
@@ -67,11 +84,12 @@ export function MonthlySheet() {
             blue: blueRate ?? prev.blue,
             oficial: oficialRate ?? prev.oficial,
         }));
-    }, []);
+    }, [isCryptoEnabled]);
 
     const arsRate = dolarRates[selectedDolarType];
 
     const updateCryptoPrices = useCallback(async (holdingsToUpdate: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[], currentArsRate: number) => {
+        if (!isCryptoEnabled) return;
         const ids = holdingsToUpdate.map(h => h.id);
         if (ids.length === 0) {
             setCryptoHoldings([]);
@@ -91,7 +109,7 @@ export function MonthlySheet() {
             };
         });
         setCryptoHoldings(updatedHoldings);
-    }, []);
+    }, [isCryptoEnabled]);
 
     useEffect(() => {
         updateDolarRates();
@@ -105,18 +123,24 @@ export function MonthlySheet() {
     }, [updateDolarRates, updateFearAndGreedIndex]);
 
     useEffect(() => {
-        const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
-        if(cryptoHoldings.length === 0 && typeof window !== 'undefined') {
-            updateCryptoPrices(initialHoldings, arsRate);
+        if (isCryptoEnabled) {
+            const initialHoldings = initialCryptoHoldings.map(h => ({...h, price:0, valueUsd: 0, valueArs: 0}));
+            if(cryptoHoldings.length === 0 && typeof window !== 'undefined') {
+                updateCryptoPrices(initialHoldings, arsRate);
+            }
+        } else {
+            setCryptoHoldings([]);
         }
-    }, [updateCryptoPrices, arsRate, cryptoHoldings.length]);
+    }, [isCryptoEnabled, updateCryptoPrices, arsRate, cryptoHoldings.length]);
     
     useEffect(() => {
-        updateCryptoPrices(cryptoHoldings, arsRate);
-    }, [arsRate, updateCryptoPrices]);
+        if (isCryptoEnabled) {
+            updateCryptoPrices(cryptoHoldings, arsRate);
+        }
+    }, [arsRate, updateCryptoPrices, isCryptoEnabled]);
 
     useEffect(() => {
-        if (cryptoHoldings.length > 0) {
+        if (isCryptoEnabled && cryptoHoldings.length > 0) {
             const interval = setInterval(() => {
                 setCryptoHoldings(currentHoldings => {
                     updateCryptoPrices(currentHoldings, arsRate);
@@ -125,7 +149,7 @@ export function MonthlySheet() {
             }, 60000); // refresh every minute
             return () => clearInterval(interval);
         }
-    }, [cryptoHoldings, updateCryptoPrices, arsRate]);
+    }, [cryptoHoldings, updateCryptoPrices, arsRate, isCryptoEnabled]);
 
 
     const filteredTransactions = useMemo(() => {
@@ -172,6 +196,7 @@ export function MonthlySheet() {
     };
     
     const handleAddCryptoHolding = (coin: { id: string; name: string; symbol: string }, quantity: number) => {
+        if (!isCryptoEnabled) return;
         const existingHolding = cryptoHoldings.find(h => h.id === coin.id);
         let newHoldings;
         if (existingHolding) {
@@ -189,6 +214,7 @@ export function MonthlySheet() {
     };
 
     const handleRemoveCryptoHolding = (id: string) => {
+        if (!isCryptoEnabled) return;
         const newHoldings = cryptoHoldings.filter(h => h.id !== id);
         updateCryptoPrices(newHoldings, arsRate);
     };
@@ -248,8 +274,12 @@ export function MonthlySheet() {
                 dolarCripto={dolarRates.cripto}
                 dolarBlue={dolarRates.blue}
                 dolarOficial={dolarRates.oficial}
+                isCryptoEnabled={isCryptoEnabled}
             />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className={cn(
+                "grid grid-cols-1 lg:grid-cols-3 gap-4",
+                !isCryptoEnabled && "lg:grid-cols-2"
+            )}>
                 <div className="lg:col-span-1 space-y-4">
                     <ExpensesTable 
                         expenses={expenses}
@@ -271,16 +301,19 @@ export function MonthlySheet() {
                         dolarRates={dolarRates}
                         selectedDolarType={selectedDolarType}
                         setSelectedDolarType={setSelectedDolarType}
+                        isCryptoEnabled={isCryptoEnabled}
                     />
                 </div>
-                <div className="lg-col-span-1 space-y-4">
-                    <CryptoTable 
-                        holdings={cryptoHoldings} 
-                        fearAndGreed={fearAndGreed}
-                        onAddHolding={handleAddCryptoHolding}
-                        onRemoveHolding={handleRemoveCryptoHolding}
-                    />
-                </div>
+                {isCryptoEnabled && (
+                    <div className="lg-col-span-1 space-y-4">
+                        <CryptoTable 
+                            holdings={cryptoHoldings} 
+                            fearAndGreed={fearAndGreed}
+                            onAddHolding={handleAddCryptoHolding}
+                            onRemoveHolding={handleRemoveCryptoHolding}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

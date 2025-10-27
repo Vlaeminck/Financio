@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import type { Transaction, DolarRates, DolarType } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +10,7 @@ type SummarySectionProps = {
   dolarRates: DolarRates;
   selectedDolarType: DolarType;
   setSelectedDolarType: (type: DolarType) => void;
+  isCryptoEnabled: boolean;
 };
 
 const formatCurrency = (value: number, currency: 'ARS' | 'USD', showNegativeSign = true) => {
@@ -32,7 +34,7 @@ const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-b
     </div>
 );
 
-export function SummarySection({ transactions, arsRate, dolarRates, selectedDolarType, setSelectedDolarType }: SummarySectionProps) {
+export function SummarySection({ transactions, arsRate, dolarRates, selectedDolarType, setSelectedDolarType, isCryptoEnabled }: SummarySectionProps) {
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const fixedExpense = transactions.filter(t => t.fixed).reduce((sum, t) => sum + t.amount, 0);
@@ -61,7 +63,7 @@ export function SummarySection({ transactions, arsRate, dolarRates, selectedDola
                     <SelectValue placeholder="Tipo de Dólar" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="cripto">Cripto</SelectItem>
+                    {isCryptoEnabled && <SelectItem value="cripto">Cripto</SelectItem>}
                     <SelectItem value="blue">Blue</SelectItem>
                     <SelectItem value="oficial">Oficial</SelectItem>
                 </SelectContent>

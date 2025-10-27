@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -24,11 +24,28 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { seedData, deleteAllData } from '@/lib/actions';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isCryptoEnabled, setIsCryptoEnabled] = useState(false);
+
+  useEffect(() => {
+    const cryptoEnabled = localStorage.getItem('cryptoEnabled') === 'true';
+    setIsCryptoEnabled(cryptoEnabled);
+  }, []);
+
+  const handleCryptoToggle = (enabled: boolean) => {
+    setIsCryptoEnabled(enabled);
+    localStorage.setItem('cryptoEnabled', String(enabled));
+    toast({
+      title: 'Configuración guardada',
+      description: `El seguimiento de criptomonedas ha sido ${enabled ? 'habilitado' : 'deshabilitado'}.`,
+    });
+  };
 
   const handleSeedData = async () => {
     setIsSeeding(true);
@@ -73,9 +90,28 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-headline">Configuración</h1>
         <p className="text-muted-foreground">
-          Gestiona los datos de tu aplicación.
+          Gestiona los datos y las funcionalidades de tu aplicación.
         </p>
       </div>
+
+       <Card>
+        <CardHeader>
+          <CardTitle>Funcionalidades</CardTitle>
+          <CardDescription>
+            Activa o desactiva las diferentes secciones de la aplicación.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="crypto-toggle"
+              checked={isCryptoEnabled}
+              onCheckedChange={handleCryptoToggle}
+            />
+            <Label htmlFor="crypto-toggle">Habilitar seguimiento de Criptomonedas</Label>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

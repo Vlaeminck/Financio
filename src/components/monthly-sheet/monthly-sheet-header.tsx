@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ type MonthlySheetHeaderProps = {
   dolarCripto?: number;
   dolarBlue?: number;
   dolarOficial?: number;
+  isCryptoEnabled: boolean;
 };
 
 const formatCurrency = (value: number) => {
@@ -39,7 +41,8 @@ export function MonthlySheetHeader({
   onReplicateMonth,
   dolarCripto,
   dolarBlue,
-  dolarOficial
+  dolarOficial,
+  isCryptoEnabled,
 }: MonthlySheetHeaderProps) {
 
   const handlePrevMonth = () => {
@@ -84,7 +87,7 @@ export function MonthlySheetHeader({
         </AlertDialog>
       </div>
       <div className="hidden md:flex items-center gap-4 text-sm">
-        {dolarCripto && (
+        {isCryptoEnabled && dolarCripto && (
             <div className="text-right">
                 <span className="font-bold">CRIPTO</span> <span className="font-mono">{formatCurrency(dolarCripto)}</span>
             </div>
