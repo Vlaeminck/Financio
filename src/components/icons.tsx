@@ -29,6 +29,7 @@ import {
   ChevronRight,
   Sheet as SheetIcon,
   Bitcoin,
+  Pencil,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -53,6 +54,7 @@ export const Icons = {
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   crypto: Bitcoin,
+  edit: Pencil,
 
   // Categories
   groceries: ShoppingCart,

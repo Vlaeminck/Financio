@@ -182,8 +182,8 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     <TableHead className="h-auto p-2 font-medium">Nombre</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Valor</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nota</TableHead>
-                    <TableHead className="h-auto p-2 w-10"></TableHead>
-                    <TableHead className="h-auto p-2 w-10"></TableHead>
+                    <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
+                    <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
                 </TableRow>
             </TableHeader>
           <TableBody>
@@ -211,7 +211,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className="p-0 w-[80px]">
+                <TableCell className="p-0 w-[150px]">
                    <Input
                     type="text"
                     value={expense.notes}
@@ -220,11 +220,27 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                   />
                 </TableCell>
                 <TableCell className="p-1 w-10 text-center align-middle">
-                  <Checkbox
-                    checked={expense.paid}
-                    onCheckedChange={(checked) => handleInputChange(expense.id, 'paid', !!checked)}
-                    className="border-gray-500 rounded-sm h-5 w-5 border-2"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <Icons.edit className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-4 space-y-4">
+                       <div className="flex items-center space-x-2">
+                          <Checkbox id={`paid-${expense.id}`} checked={expense.paid} onCheckedChange={(checked) => handleInputChange(expense.id, 'paid', !!checked)} />
+                          <Label htmlFor={`paid-${expense.id}`}>¿Pagado?</Label>
+                       </div>
+                       <div className="flex items-center space-x-2">
+                          <Checkbox id={`digital-${expense.id}`} checked={expense.digital} onCheckedChange={(checked) => handleInputChange(expense.id, 'digital', !!checked)} />
+                          <Label htmlFor={`digital-${expense.id}`}>¿Digital?</Label>
+                       </div>
+                       <div className="flex items-center space-x-2">
+                          <Checkbox id={`fixed-${expense.id}`} checked={expense.fixed} onCheckedChange={(checked) => handleInputChange(expense.id, 'fixed', !!checked)} />
+                          <Label htmlFor={`fixed-${expense.id}`}>¿Fijo?</Label>
+                       </div>
+                    </PopoverContent>
+                  </Popover>
                 </TableCell>
                  <TableCell className="p-1 w-10 text-center align-middle">
                   <button onClick={() => onRemoveExpense(expense.id)} className="text-red-500 hover:text-red-700 font-bold">
