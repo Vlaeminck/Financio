@@ -213,8 +213,8 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                 <TableRow className="text-xs text-muted-foreground">
                     <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nombre</TableHead>
-                    <TableHead className="h-auto p-2 font-medium w-[80px]">Cuotas</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Valor</TableHead>
+                    <TableHead className="h-auto p-2 font-medium w-[80px]">Cuotas</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nota</TableHead>
                     <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
                     <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
@@ -250,14 +250,6 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     />
                   </div>
                 </TableCell>
-                <TableCell className="p-0 w-[80px]">
-                   <Input
-                    type="text"
-                    value={expense.installments || ''}
-                    onChange={(e) => handleInputChange(expense.id, 'installments', e.target.value)}
-                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none text-center"
-                  />
-                </TableCell>
                 <TableCell className={cn("text-right font-medium p-0 w-[120px] relative")}>
                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
                    <Input
@@ -266,6 +258,14 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     value={expense.amount}
                     onChange={(e) => handleInputChange(expense.id, 'amount', e.target.validity.valid ? parseFloat(e.target.value) || 0 : expense.amount)}
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right w-full rounded-none pl-6"
+                  />
+                </TableCell>
+                <TableCell className="p-0 w-[80px]">
+                   <Input
+                    type="text"
+                    value={expense.installments || ''}
+                    onChange={(e) => handleInputChange(expense.id, 'installments', e.target.value)}
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none text-center"
                   />
                 </TableCell>
                 <TableCell className="p-0 w-[150px]">
