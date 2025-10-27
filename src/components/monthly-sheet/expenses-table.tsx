@@ -54,6 +54,7 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
   const [paid, setPaid] = useState(false);
   const [digital, setDigital] = useState(false);
   const [fixed, setFixed] = useState(false);
+  const [installments, setInstallments] = useState('');
   const [open, setOpen] = useState(false);
 
   const handleAdd = () => {
@@ -66,12 +67,14 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
         paid,
         digital,
         fixed,
+        installments,
       });
       setDescription('');
       setAmount('');
       setPaid(false);
       setDigital(false);
       setFixed(false);
+      setInstallments('');
       setOpen(false);
     }
   };
@@ -126,6 +129,24 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
                   placeholder="0"
                 />
               </div>
+            </div>
+             <div className="grid grid-cols-2 gap-4">
+                 <div className="grid gap-2">
+                    <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Label htmlFor="installments">Cuotas</Label>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Si es un pago en cuotas, indica cuál. Ej: 3/6</p>
+                    </TooltipContent>
+                    </Tooltip>
+                    <Input
+                    id="installments"
+                    value={installments}
+                    onChange={(e) => setInstallments(e.target.value)}
+                    placeholder="Ej: 3/6"
+                    />
+                </div>
             </div>
             <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
@@ -193,6 +214,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     <TableHead className="h-auto p-2 font-medium">Nombre</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Valor</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nota</TableHead>
+                    <TableHead className="h-auto p-2 font-medium w-[80px]">Cuotas</TableHead>
                     <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
                     <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
                 </TableRow>
@@ -220,18 +242,27 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                 <TableCell className={cn("text-right font-medium p-0 w-[120px] relative")}>
                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
                    <Input
-                    type="number"
+                    type="text"
+                    pattern="[0-9]*"
                     value={expense.amount}
-                    onChange={(e) => handleInputChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange(expense.id, 'amount', e.target.validity.valid ? parseFloat(e.target.value) || 0 : expense.amount)}
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right w-full rounded-none pl-6"
                   />
                 </TableCell>
                 <TableCell className="p-0 w-[150px]">
                    <Input
                     type="text"
-                    value={expense.notes}
+                    value={expense.notes || ''}
                     onChange={(e) => handleInputChange(expense.id, 'notes', e.target.value)}
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
+                  />
+                </TableCell>
+                <TableCell className="p-0 w-[80px]">
+                   <Input
+                    type="text"
+                    value={expense.installments || ''}
+                    onChange={(e) => handleInputChange(expense.id, 'installments', e.target.value)}
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none text-center"
                   />
                 </TableCell>
                 <TableCell className="p-1 w-10 text-center align-middle">
@@ -287,7 +318,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
             ))}
             <TableRow className="font-bold bg-green-200 border-b-0">
                 <TableCell className="p-2">GASTO GENERAL</TableCell>
-                <TableCell className="text-right p-2" colSpan={4}>{formatCurrency(totalExpenses)}</TableCell>
+                <TableCell className="text-right p-2" colSpan={5}>{formatCurrency(totalExpenses)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -298,3 +329,5 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
     </Card>
   );
 }
+
+    

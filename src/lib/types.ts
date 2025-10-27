@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 import type { Timestamp } from 'firebase/firestore';
 
@@ -15,6 +16,7 @@ export type Transaction = {
   paid?: boolean;
   digital?: boolean;
   fixed?: boolean;
+  installments?: string;
 };
 
 export type Category = {
@@ -52,3 +54,5 @@ export type DolarType = 'cripto' | 'blue' | 'oficial';
 export type DolarRates = {
   [key in DolarType]: number;
 };
+
+    
