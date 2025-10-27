@@ -1,7 +1,9 @@
 
+
 import { Card, CardContent } from '@/components/ui/card';
 import type { Transaction, DolarRates, DolarType } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Icons } from '@/components/icons';
 
 
 type SummarySectionProps = {
@@ -27,9 +29,9 @@ const formatCurrency = (value: number, currency: 'ARS' | 'USD', showNegativeSign
     return formatted;
 }
 
-const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-black' }: { title: string; value: string; bgColor?: string; textColor?: string; }) => (
+const SummaryBox = ({ title, value, bgColor = 'bg-gray-200', textColor = 'text-black' }: { title: React.ReactNode; value: string; bgColor?: string; textColor?: string; }) => (
     <div className={`p-2 flex justify-between items-center ${bgColor} ${textColor} text-sm rounded-md`}>
-        <span className="font-bold">{title}</span>
+        <div className="font-bold flex items-center gap-1">{title}</div>
         <span className="font-mono">{value}</span>
     </div>
 );
@@ -53,7 +55,11 @@ export function SummarySection({ transactions, arsRate, dolarRates, selectedDola
 
   return (
     <div className="space-y-2">
-        <SummaryBox title="GASTO FIJO" value={formatCurrency(fixedExpense, 'ARS', false)} bgColor="bg-green-200"/>
+        <SummaryBox 
+          title={<><Icons.pin className="h-4 w-4" /> GASTO FIJO</>} 
+          value={formatCurrency(fixedExpense, 'ARS', false)} 
+          bgColor="bg-green-200"
+        />
         <SummaryBox title="GASTO GENERAL" value={formatCurrency(totalExpense, 'ARS', false)} bgColor="bg-green-200"/>
         <SummaryBox title="EN DIGITAL" value={formatCurrency(digitalExpense, 'ARS', false)} bgColor="bg-transparent text-foreground"/>
         <SummaryBox title="RESTANTE PESOS" value={formatCurrency(remainingPesos, 'ARS')} bgColor="bg-yellow-300"/>
