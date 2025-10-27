@@ -47,10 +47,10 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
 
   const handleAdd = () => {
     const numericAmount = parseFloat(amount);
-    if (description && !isNaN(numericAmount)) {
+    if (description) {
       onAddExpense({
         description,
-        amount: numericAmount,
+        amount: isNaN(numericAmount) ? 0 : numericAmount,
         notes: '',
         paid,
         digital,
@@ -104,7 +104,7 @@ function AddExpenseForm({ onAddExpense }: { onAddExpense: ExpensesTableProps['on
                     <Label htmlFor="amount">Valor</Label>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>El monto total del gasto en pesos.</p>
+                    <p>El monto total del gasto en pesos. Puedes dejarlo en 0 para completarlo más tarde.</p>
                   </TooltipContent>
                 </Tooltip>
                 <Input
