@@ -43,7 +43,7 @@ export function MonthlySheet() {
 
     useEffect(() => {
         if (!currentDate) {
-          setCurrentDate(new Date('2024-10-01T00:00:00Z'));
+          setCurrentDate(new Date());
         }
     }, [currentDate]);
 
