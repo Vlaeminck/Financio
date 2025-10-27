@@ -10,6 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Transaction } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -243,9 +254,30 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                   </Popover>
                 </TableCell>
                  <TableCell className="p-1 w-10 text-center align-middle">
-                  <button onClick={() => onRemoveExpense(expense.id)} className="text-red-500 hover:text-red-700 font-bold">
-                    X
-                  </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="text-red-500 hover:text-red-700 font-bold">
+                          X
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Esta acción no se puede deshacer. Se eliminará permanentemente el gasto.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-destructive hover:bg-destructive/90"
+                            onClick={() => onRemoveExpense(expense.id)}
+                          >
+                            Sí, eliminar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}
