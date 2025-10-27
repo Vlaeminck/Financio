@@ -211,6 +211,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
         <Table>
             <TableHeader>
                 <TableRow className="text-xs text-muted-foreground">
+                    <TableHead className="h-auto p-2 w-10 text-center"></TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nombre</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Valor</TableHead>
                     <TableHead className="h-auto p-2 font-medium">Nota</TableHead>
@@ -228,6 +229,16 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                   !expense.paid && expense.amount > 0 ? 'bg-red-200' : 'bg-green-200'
                 )}
               >
+                <TableCell className="p-1 w-10 text-center align-middle">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Checkbox id={`paid-${expense.id}`} checked={expense.paid} onCheckedChange={(checked) => handleInputChange(expense.id, 'paid', !!checked)} />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Marcar como pagado</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TableCell>
                 <TableCell className="font-medium p-0">
                   <div className="flex items-center">
                     {expense.fixed && <Icons.pin className="h-4 w-4 ml-1 text-muted-foreground" />}
@@ -274,10 +285,6 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-4 space-y-4">
                        <div className="flex items-center space-x-2">
-                          <Checkbox id={`paid-${expense.id}`} checked={expense.paid} onCheckedChange={(checked) => handleInputChange(expense.id, 'paid', !!checked)} />
-                          <Label htmlFor={`paid-${expense.id}`}>¿Pagado?</Label>
-                       </div>
-                       <div className="flex items-center space-x-2">
                           <Checkbox id={`digital-${expense.id}`} checked={expense.digital} onCheckedChange={(checked) => handleInputChange(expense.id, 'digital', !!checked)} />
                           <Label htmlFor={`digital-${expense.id}`}>¿Digital?</Label>
                        </div>
@@ -317,7 +324,7 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
               </TableRow>
             ))}
             <TableRow className="font-bold bg-green-200 border-b-0">
-                <TableCell className="p-2">GASTO GENERAL</TableCell>
+                <TableCell className="p-2" colSpan={2}>GASTO GENERAL</TableCell>
                 <TableCell className="text-right p-2" colSpan={5}>{formatCurrency(totalExpenses)}</TableCell>
             </TableRow>
           </TableBody>
@@ -329,5 +336,3 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
     </Card>
   );
 }
-
-    
