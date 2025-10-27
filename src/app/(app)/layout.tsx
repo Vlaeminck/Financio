@@ -93,6 +93,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               variant="outline"
               size="icon"
               className="shrink-0 md:hidden ml-auto"
+              aria-label="Alternar menú de navegación"
             >
               <Icons.logo className="h-5 w-5" />
               <span className="sr-only">Alternar menú de navegación</span>
@@ -119,6 +120,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   alt={userAvatar.description}
                   data-ai-hint={userAvatar.imageHint}
                   className="rounded-full"
+                  priority
                 />
               )}
               <span className="sr-only">Alternar menú de usuario</span>

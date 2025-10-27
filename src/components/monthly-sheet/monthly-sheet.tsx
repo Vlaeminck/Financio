@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, memo } from 'react';
 import { MonthlySheetHeader } from './monthly-sheet-header';
 import { ExpensesTable } from './expenses-table';
 import { IncomeTable } from './income-table';
 import { CryptoTable } from './crypto-table';
 import { SummarySection } from './summary-section';
 import type { Transaction, CryptoHolding, FearAndGreed, DolarType } from '@/lib/types';
-import { getMonth, getYear, addMonths, Timestamp } from 'date-fns';
+import { getMonth, getYear, addMonths } from 'date-fns';
 import { getCoinPrices, getDolarCriptoRate, getFearAndGreedIndex, getDolarBlueRate, getDolarOficialRate } from '@/lib/actions';
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, where, query, getDocs } from 'firebase/firestore';
@@ -16,6 +16,13 @@ import { cn } from '@/lib/utils';
 
 
 const initialCryptoHoldings: Omit<CryptoHolding, 'price' | 'valueUsd' | 'valueArs'>[] = [];
+
+// Memoize components to prevent re-rendering when props don't change
+const MemoizedExpensesTable = memo(ExpensesTable);
+const MemoizedIncomeTable = memo(IncomeTable);
+const MemoizedCryptoTable = memo(CryptoTable);
+const MemoizedSummarySection = memo(SummarySection);
+
 
 export function MonthlySheet() {
     const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
@@ -167,16 +174,16 @@ export function MonthlySheet() {
     }), [filteredTransactions]);
     const incomes = useMemo(() => filteredTransactions.filter(t => t.type === 'income').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
     
-    const handleTransactionChange = async (updatedTransaction: Transaction) => {
+    const handleTransactionChange = useCallback(async (updatedTransaction: Transaction) => {
         const { id, ...dataToUpdate } = updatedTransaction;
         const docRef = doc(db, 'transactions', id);
         await updateDoc(docRef, {
           ...dataToUpdate,
           date: updatedTransaction.date
         });
-    }
+    }, []);
     
-    const handleAddIncome = async (newIncomeData: { description: string; amount: number }) => {
+    const handleAddIncome = useCallback(async (newIncomeData: { description: string; amount: number }) => {
         if (!currentDate) return;
         const newTransaction = {
           date: currentDate,
@@ -186,9 +193,9 @@ export function MonthlySheet() {
           category: 'Ingresos',
         };
         await addDoc(collection(db, 'transactions'), newTransaction);
-    }
+    }, [currentDate]);
 
-    const handleAddExpense = async (newExpenseData: Omit<Transaction, 'id' | 'date' | 'type' | 'category'>) => {
+    const handleAddExpense = useCallback(async (newExpenseData: Omit<Transaction, 'id' | 'date' | 'type' | 'category'>) => {
         if (!currentDate) return;
         const newTransaction = {
             ...newExpenseData,
@@ -197,9 +204,9 @@ export function MonthlySheet() {
             category: newExpenseData.description,
         };
         await addDoc(collection(db, 'transactions'), newTransaction);
-    };
+    }, [currentDate]);
     
-    const handleAddCryptoHolding = (coin: { id: string; name: string; symbol: string }, quantity: number) => {
+    const handleAddCryptoHolding = useCallback((coin: { id: string; name: string; symbol: string }, quantity: number) => {
         if (!isCryptoEnabled) return;
         const existingHolding = cryptoHoldings.find(h => h.id === coin.id);
         let newHoldings;
@@ -215,23 +222,23 @@ export function MonthlySheet() {
             newHoldings = [...cryptoHoldings, newHolding];
         }
         updateCryptoPrices(newHoldings, arsRate);
-    };
+    }, [isCryptoEnabled, cryptoHoldings, arsRate, updateCryptoPrices]);
 
-    const handleRemoveCryptoHolding = (id: string) => {
+    const handleRemoveCryptoHolding = useCallback((id: string) => {
         if (!isCryptoEnabled) return;
         const newHoldings = cryptoHoldings.filter(h => h.id !== id);
         updateCryptoPrices(newHoldings, arsRate);
-    };
+    }, [isCryptoEnabled, cryptoHoldings, arsRate, updateCryptoPrices]);
     
-    const handleRemoveExpense = async (id: string) => {
+    const handleRemoveExpense = useCallback(async (id: string) => {
         await deleteDoc(doc(db, 'transactions', id));
-    };
+    }, []);
 
-    const handleRemoveIncome = async (id: string) => {
+    const handleRemoveIncome = useCallback(async (id: string) => {
         await deleteDoc(doc(db, 'transactions', id));
-    };
+    }, []);
 
-    const handleReplicateMonth = async () => {
+    const handleReplicateMonth = useCallback(async () => {
         if (!currentDate) return;
         const nextMonthDate = addMonths(currentDate, 1);
         const currentMonth = currentDate.getMonth();
@@ -262,11 +269,11 @@ export function MonthlySheet() {
     
         await batch.commit();
         setCurrentDate(nextMonthDate);
-    };
+    }, [currentDate]);
 
 
     if (!currentDate || loading) {
-        return null;
+        return null; // or a loading skeleton
     }
 
     return (
@@ -285,7 +292,7 @@ export function MonthlySheet() {
                 !isCryptoEnabled && "lg:grid-cols-2"
             )}>
                 <div className="lg:col-span-1 space-y-4">
-                    <ExpensesTable 
+                    <MemoizedExpensesTable 
                         expenses={expenses}
                         onExpenseChange={handleTransactionChange}
                         onAddExpense={handleAddExpense}
@@ -293,13 +300,13 @@ export function MonthlySheet() {
                     />
                 </div>
                 <div className="lg:col-span-1 space-y-4">
-                    <IncomeTable 
+                    <MemoizedIncomeTable 
                         incomes={incomes}
                         onIncomeChange={handleTransactionChange}
                         onAddIncome={handleAddIncome}
                         onRemoveIncome={handleRemoveIncome}
                     />
-                    <SummarySection
+                    <MemoizedSummarySection
                         transactions={filteredTransactions} 
                         arsRate={arsRate}
                         dolarRates={dolarRates}
@@ -310,7 +317,7 @@ export function MonthlySheet() {
                 </div>
                 {isCryptoEnabled && (
                     <div className="lg-col-span-1 space-y-4">
-                        <CryptoTable 
+                        <MemoizedCryptoTable 
                             holdings={cryptoHoldings} 
                             fearAndGreed={fearAndGreed}
                             onAddHolding={handleAddCryptoHolding}
