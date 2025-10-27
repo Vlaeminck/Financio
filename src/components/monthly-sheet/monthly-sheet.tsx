@@ -160,7 +160,11 @@ export function MonthlySheet() {
         );
     }, [allTransactions, currentDate]);
 
-    const expenses = useMemo(() => filteredTransactions.filter(t => t.type === 'expense').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
+    const expenses = useMemo(() => filteredTransactions.filter(t => t.type === 'expense').sort((a,b) => {
+        if (a.fixed && !b.fixed) return -1;
+        if (!a.fixed && b.fixed) return 1;
+        return a.date.getTime() - b.date.getTime()
+    }), [filteredTransactions]);
     const incomes = useMemo(() => filteredTransactions.filter(t => t.type === 'income').sort((a,b) => a.date.getTime() - b.date.getTime()), [filteredTransactions]);
     
     const handleTransactionChange = async (updatedTransaction: Transaction) => {

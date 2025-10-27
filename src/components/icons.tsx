@@ -30,6 +30,7 @@ import {
   Sheet as SheetIcon,
   Bitcoin,
   Pencil,
+  Pin,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -55,6 +56,7 @@ export const Icons = {
   chevronRight: ChevronRight,
   crypto: Bitcoin,
   edit: Pencil,
+  pin: Pin,
 
   // Categories
   groceries: ShoppingCart,

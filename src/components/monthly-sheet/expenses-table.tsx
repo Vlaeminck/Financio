@@ -207,12 +207,15 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                 )}
               >
                 <TableCell className="font-medium p-0">
-                  <Input
-                    type="text"
-                    value={expense.description}
-                    onChange={(e) => handleInputChange(expense.id, 'description', e.target.value)}
-                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
-                  />
+                  <div className="flex items-center">
+                    {expense.fixed && <Icons.pin className="h-4 w-4 ml-1 text-muted-foreground" />}
+                    <Input
+                      type="text"
+                      value={expense.description}
+                      onChange={(e) => handleInputChange(expense.id, 'description', e.target.value)}
+                      className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
+                    />
+                  </div>
                 </TableCell>
                 <TableCell className={cn("text-right font-medium p-0 w-[120px] relative")}>
                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
