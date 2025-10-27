@@ -15,6 +15,17 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 type IncomeTableProps = {
   incomes: Transaction[];
@@ -108,18 +119,40 @@ export function IncomeTable({ incomes, onIncomeChange, onAddIncome, onRemoveInco
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 rounded-none w-full"
                   />
                 </TableCell>
-                <TableCell className="text-right p-0 w-[120px]">
+                <TableCell className="text-right p-0 w-[140px] relative">
+                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
                    <Input
                     type="number"
                     value={income.amount}
                     onChange={(e) => handleInputChange(income.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right rounded-none w-full"
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right rounded-none w-full pl-6"
                   />
                 </TableCell>
                 <TableCell className="p-1 w-10 text-center align-middle">
-                  <button onClick={() => onRemoveIncome(income.id)} className="text-red-500 hover:text-red-700 font-bold">
-                    X
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="text-red-500 hover:text-red-700 font-bold">
+                        X
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Esta acción no se puede deshacer. Se eliminará permanentemente el ingreso.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive hover:bg-destructive/90"
+                          onClick={() => onRemoveIncome(income.id)}
+                        >
+                          Sí, eliminar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}

@@ -214,12 +214,13 @@ export function ExpensesTable({ expenses, onExpenseChange, onAddExpense, onRemov
                     className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 w-full rounded-none"
                   />
                 </TableCell>
-                <TableCell className={cn("text-right font-medium p-0 w-[100px]")}>
+                <TableCell className={cn("text-right font-medium p-0 w-[120px] relative")}>
+                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
                    <Input
                     type="number"
                     value={expense.amount}
                     onChange={(e) => handleInputChange(expense.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right w-full rounded-none"
+                    className="h-auto py-1 px-2 text-sm bg-transparent border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 text-right w-full rounded-none pl-6"
                   />
                 </TableCell>
                 <TableCell className="p-0 w-[150px]">
